@@ -1,0 +1,27 @@
+HKCR
+{
+	asptools.XList.1 = s 'XList Class'
+	{
+		CLSID = s '{0262D8A9-E32B-45D0-856C-670910034CD6}'
+	}
+	asptools.XList = s 'XList Class'
+	{
+		CLSID = s '{0262D8A9-E32B-45D0-856C-670910034CD6}'
+		CurVer = s 'asptools.XList.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {0262D8A9-E32B-45D0-856C-670910034CD6} = s 'XList Class'
+		{
+			ProgID = s 'asptools.XList.1'
+			VersionIndependentProgID = s 'asptools.XList'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Neutral'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{11892796-187A-4CBE-B5D0-929E5A9A475D}'
+		}
+	}
+}

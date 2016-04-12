@@ -1,0 +1,27 @@
+HKCR
+{
+	asptools.LRUCache.1 = s 'XLRUCache Class'
+	{
+		CLSID = s '{0BABCC27-BA72-45C1-A213-D98B3AD27735}'
+	}
+	asptools.LRUCache = s 'XLRUCache Class'
+	{
+		CLSID = s '{0BABCC27-BA72-45C1-A213-D98B3AD27735}'
+		CurVer = s 'asptools.LRUCache.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {0BABCC27-BA72-45C1-A213-D98B3AD27735} = s 'XLRUCache Class'
+		{
+			ProgID = s 'asptools.LRUCache.1'
+			VersionIndependentProgID = s 'asptools.LRUCache'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Both'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{11892796-187A-4CBE-B5D0-929E5A9A475D}'
+		}
+	}
+}

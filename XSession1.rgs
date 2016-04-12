@@ -1,0 +1,27 @@
+HKCR
+{
+	asptools.Session.1 = s 'XSession Class'
+	{
+		CLSID = s '{930DFD19-30DF-4AE6-AE8A-87E822A4020E}'
+	}
+	asptools.Session = s 'XSession Class'
+	{
+		CLSID = s '{930DFD19-30DF-4AE6-AE8A-87E822A4020E}'
+		CurVer = s 'asptools.Session.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {930DFD19-30DF-4AE6-AE8A-87E822A4020E} = s 'XSession Class'
+		{
+			ProgID = s 'asptools.Session.1'
+			VersionIndependentProgID = s 'asptools.Session'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Both'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{11892796-187A-4CBE-B5D0-929E5A9A475D}'
+		}
+	}
+}

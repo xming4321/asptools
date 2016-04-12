@@ -1,0 +1,11 @@
+; asptools.def : Declares the module parameters.
+
+LIBRARY      "asptools.DLL"
+
+EXPORTS
+	DllCanUnloadNow		PRIVATE
+	DllGetClassObject	PRIVATE
+	DllRegisterServer	PRIVATE
+	DllUnregisterServer	PRIVATE
+	GetFilterVersion
+	HttpFilterProc

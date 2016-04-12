@@ -1,0 +1,27 @@
+HKCR
+{
+	asptools.Image.1 = s 'XImage Class'
+	{
+		CLSID = s '{58F10C9C-F7DC-43FC-A265-23298302B5CF}'
+	}
+	asptools.Image = s 'XImage Class'
+	{
+		CLSID = s '{58F10C9C-F7DC-43FC-A265-23298302B5CF}'
+		CurVer = s 'asptools.Image.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {58F10C9C-F7DC-43FC-A265-23298302B5CF} = s 'XImage Class'
+		{
+			ProgID = s 'asptools.Image.1'
+			VersionIndependentProgID = s 'asptools.Image'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Both'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{11892796-187A-4CBE-B5D0-929E5A9A475D}'
+		}
+	}
+}

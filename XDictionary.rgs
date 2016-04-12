@@ -1,0 +1,27 @@
+HKCR
+{
+	asptools.Dictionary.1 = s 'XDictionary Class'
+	{
+		CLSID = s '{CB21844C-4953-4C4C-B315-AC8D876A4FF5}'
+	}
+	asptools.Dictionary = s 'XDictionary Class'
+	{
+		CLSID = s '{CB21844C-4953-4C4C-B315-AC8D876A4FF5}'
+		CurVer = s 'asptools.Dictionary.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {CB21844C-4953-4C4C-B315-AC8D876A4FF5} = s 'XDictionary Class'
+		{
+			ProgID = s 'asptools.Dictionary.1'
+			VersionIndependentProgID = s 'asptools.Dictionary'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Neutral'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{11892796-187A-4CBE-B5D0-929E5A9A475D}'
+		}
+	}
+}

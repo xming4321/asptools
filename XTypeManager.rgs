@@ -1,0 +1,27 @@
+HKCR
+{
+	asptools.TypeManager.1 = s 'XTypeManager Class'
+	{
+		CLSID = s '{E0671AFC-2DA9-448F-8661-7111EAFCE78E}'
+	}
+	asptools.TypeManager = s 'XTypeManager Class'
+	{
+		CLSID = s '{E0671AFC-2DA9-448F-8661-7111EAFCE78E}'
+		CurVer = s 'asptools.TypeManager.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {E0671AFC-2DA9-448F-8661-7111EAFCE78E} = s 'XTypeManager Class'
+		{
+			ProgID = s 'asptools.TypeManager.1'
+			VersionIndependentProgID = s 'asptools.TypeManager'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Free'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{11892796-187A-4CBE-B5D0-929E5A9A475D}'
+		}
+	}
+}

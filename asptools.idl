@@ -1,0 +1,1729 @@
+// asptools.idl : IDL source for asptools
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (asptools.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(7F46657A-6367-4BC7-B4FF-D48943CD3A0B),
+	dual,
+	nonextensible,
+	helpstring("IXList Interface"),
+	pointer_default(unique)
+]
+/*!	\brief 列表对象，用于存储一个数组对象，方便操作一组数据
+
+	此对象不可直接创建，只可由其他对象创建并返回。
+*/
+interface IXList : IDispatch{
+	/*! 查询给定下标的单元数据，缺省属性
+	\param i 要查询的键值下标，从 0 开始
+	\return 存储在数组内的变量*/
+	[propget, id(0), helpstring("property Item")] HRESULT Item([in] long i, [out, retval] VARIANT* pVal);
+
+	/*! 查询数组内的数据个数
+	\retval pval 数组内的数据个数*/
+	[id(1), helpstring("method Count")] HRESULT Count([out,retval] LONG* pval);
+
+	[propget, id(0xfffffffc), helpstring("property _NewEnum"), restricted] HRESULT _NewEnum([out, retval] IUnknown** pVal);
+
+	/*! 根据给定的格式化字符串将数组内的数据拼装为一个字符串
+	\param fmtString 格式化字符串，格式中使用“$字段名$”指定引用某项数值
+	\retval pval 拼装成功的字符串*/
+	[id(2), helpstring("method Join")] HRESULT Join([in] BSTR fmtString, [out,retval] BSTR* pval);
+};
+[
+	object,
+	uuid(7F46657A-6367-DFC7-B4FF-D48943CD3A0B),
+	dual,
+	nonextensible,
+	helpstring("IXRecord Interface"),
+	pointer_default(unique)
+]
+/*!	\brief 记录对象，作为 Rescords 对象的单元对象
+
+	此对象不可直接创建，只可由其他 Records 对象创建并返回。
+*/
+interface IXRecord : IDispatch{
+	/*! 根据给定的 key 查询和设置响应单元数据，缺省属性
+	\param key 要查询的键值名字
+	\return 存储在数组内的变量*/
+	[propget, id(0), helpstring("property Item")] HRESULT Item([in]  VARIANT key, [out, retval] VARIANT* pVal);
+	[propput, id(0), helpstring("property Item")] HRESULT Item([in]  VARIANT key, [in] VARIANT newVal);
+	[id(1), helpstring("property SetFormat")] HRESULT SetFormat([in] BSTR newFmt);
+	[propget, id(2), helpstring("property FormatName")] HRESULT FormatName([out, retval] BSTR* pVal);
+};
+[
+	object,
+	uuid(7F46657B-6367-DFC7-B4FF-D48943CD3A0B),
+	dual,
+	nonextensible,
+	helpstring("IXField Interface"),
+	pointer_default(unique)
+]
+/*!	\brief 字段对象，用于存储 Rescords 对象的字段属性
+
+	此对象不可直接创建，只可由其他 Records 对象创建并返回。
+*/
+interface IXField : IDispatch{
+	/*! 字段名称
+	\return 字段名称*/
+	[propget, id(0), helpstring("property Name")] HRESULT Name([out, retval] BSTR* pVal);
+
+	/*! 字段数据类型
+	\return 字段数据类型，可能的数值有：vbString，vbBoolean，vbDate，vbSingle，vbDouble，vbInteger，vbLong*/
+	[propget, id(1), helpstring("property Type")] HRESULT Type([out, retval] short* pVal);
+};
+[
+	object,
+	uuid(CD46657A-6367-DFC7-B4FF-D48943CD3A0B),
+	dual,
+	nonextensible,
+	helpstring("IXRecords Interface"),
+	pointer_default(unique)
+]
+/*!	\brief 记录集对象，用于存储一组同构数据
+
+	此对象不可直接创建，只可由其他对象(通常是 document 对象)创建并返回。
+*/
+interface IXRecords : IDispatch{
+	/*! 根据给定的下标查询记录，缺省属性
+	\param i 要查询的记录的下标，从 0 开始
+	\return 单条记录对象*/
+	[propget, id(0), helpstring("property Item")] HRESULT Item([in] long i, [out, retval] IXRecord** pVal);
+
+	/*! 查询对象中记录个数
+	\retval pval 记录数 */
+	[id(1), helpstring("method RecordCount")] HRESULT RecordCount([out,retval] LONG* pval);
+
+	/*! 根据给定的格式化字符串将对象内的数据拼装为一个字符串
+	\param fmtString 格式化字符串，格式中使用“$字段名$”指定引用某项数值
+	\retval pval 拼装成功的字符串*/
+	[id(2), helpstring("method Join")] HRESULT Join([in] BSTR fmtString, [out,retval] BSTR* pval);
+
+	/*! 创建一条新记录，并返回记录对象用于更新数据
+	\retval pVal 新创建的记录对象*/
+	[id(3), helpstring("method AddNew")] HRESULT AddNew([out, retval] IXRecord** pVal);
+
+	/*! 在记录集中删除给定下标的记录
+	\param pos 给定要删除的下标，从 0 开始*/
+	[id(4), helpstring("method Remove")] HRESULT Remove([in] int pos);
+
+	/*! 删除对象中的全部记录*/
+	[id(5), helpstring("method RemoveAll")] HRESULT RemoveAll();
+
+	/*! 从记录集中筛选记录
+	\param key 指定在那个字段进行筛选
+	\param op 筛选运算符，可以为字符串表示的以下运算符：
+			"="，"=="，"<"，"<="，">"，">="，"<>"，"!="，"between"，"in"。
+			只有当op为"between"时，v2 参数才需要提供，其他操作可以省略。当op为"in"时，v1必须为数组类型。
+	\param v1 筛选条件的第一个变量
+	\param v2 筛选条件的第二个变量，根据筛选运算符可以省略
+	\retval pVal 筛选后符合条件的记录集对象*/
+	[id(6), helpstring("method SelectWhere")] HRESULT SelectWhere([in] BSTR key, [in] BSTR op, [in] VARIANT v1, [in, optional] VARIANT v2, [out,retval] IXRecords** pVal);
+
+	/*! 从记录集中统计符合条件的记录总数
+	\param key 指定在那个字段进行筛选
+	\param op 筛选运算符，可以为字符串表示的以下运算符：
+			"="，"=="，"<"，"<="，">"，">="，"<>"，"!="，"between"，"in"。
+			只有当op为"between"时，v2 参数才需要提供，其他操作可以省略。当op为"in"时，v1必须为数组类型。
+	\param v1 筛选条件的第一个变量
+	\param v2 筛选条件的第二个变量，根据筛选运算符可以省略
+	\retval pVal 筛选后符合条件的记录个数*/
+	[id(7), helpstring("method CountWhere")] HRESULT CountWhere([in] BSTR key, [in] BSTR op, [in] VARIANT v1, [in, optional] VARIANT v2, [out,retval] long* pVal);
+
+	/*! 检查记录集中是否存在符合条件的记录
+	\param key 指定在那个字段进行筛选
+	\param op 筛选运算符，可以为字符串表示的以下运算符：
+			"="，"=="，"<"，"<="，">"，">="，"<>"，"!="，"between"，"in"。
+			只有当op为"between"时，v2 参数才需要提供，其他操作可以省略。当op为"in"时，v1必须为数组类型。
+	\param v1 筛选条件的第一个变量
+	\param v2 筛选条件的第二个变量，根据筛选运算符可以省略
+	\retval pVal 为 True 则存在，否则不存在*/
+	[id(8), helpstring("method ExistsWhere")] HRESULT ExistsWhere([in] BSTR key, [in] BSTR op, [in] VARIANT v1, [in, optional] VARIANT v2, [out,retval] VARIANT_BOOL* pVal);
+
+	/*! 更新记录集中全部记录的某个字段的内容
+	\param key 指定要更新的字段
+	\param newVal 指定更新的新数据*/
+	[id(9), helpstring("method Update")] HRESULT Update([in] BSTR key, [in] VARIANT newVal);
+
+	/*! 更新记录集中符合条件的记录的某个字段的内容
+	\param key 指定要更新的字段
+	\param newVal 指定更新的新数据
+	\param wherekey 指定在那个字段进行筛选
+	\param op 筛选运算符，可以为字符串表示的以下运算符：
+			"="，"=="，"<"，"<="，">"，">="，"<>"，"!="，"between"，"in"。
+			只有当op为"between"时，v2 参数才需要提供，其他操作可以省略。当op为"in"时，v1必须为数组类型。
+	\param v1 筛选条件的第一个变量
+	\param v2 筛选条件的第二个变量，根据筛选运算符可以省略
+	\retval pVal 实际更新的记录数*/
+	[id(10), helpstring("method UpdateWhere")] HRESULT UpdateWhere([in] BSTR key, [in] VARIANT newVal, [in] BSTR whereKey, [in] BSTR op, [in] VARIANT v1, [in, optional] VARIANT v2, [out,retval] long* pVal);
+
+	/*! 删除记录集中符合条件的记录
+	\param key 指定在那个字段进行筛选
+	\param op 筛选运算符，可以为字符串表示的以下运算符：
+			"="，"=="，"<"，"<="，">"，">="，"<>"，"!="，"between"，"in"。
+			只有当op为"between"时，v2 参数才需要提供，其他操作可以省略。当op为"in"时，v1必须为数组类型。
+	\param v1 筛选条件的第一个变量
+	\param v2 筛选条件的第二个变量，根据筛选运算符可以省略*/
+	[id(11), helpstring("method DeleteWhere")] HRESULT DeleteWhere([in] BSTR key, [in] BSTR op, [in] VARIANT v1, [in, optional] VARIANT v2, [out,retval] long* pVal);
+
+	/*! 统计记录集中某字段的最大值
+	\param key 指定统计的字段名称
+	\retval pVal 统计出的最大值*/
+	[id(12), helpstring("method Max")] HRESULT Max([in] BSTR key, [out,retval] VARIANT* pVal);
+
+	/*! 统计记录集中某字段的最小值
+	\param key 指定统计的字段名称
+	\retval pVal 统计出的最小值*/
+	[id(13), helpstring("method Min")] HRESULT Min([in] BSTR key, [out,retval] VARIANT* pVal);
+
+	/*! 根据给定的字段对记录集进行排序
+	\param key 指定排序的字段名称
+	\param varAsc 指定排序的方向，True指定升序，缺省为True*/
+	[id(14), helpstring("method Sort")] HRESULT Sort([in] VARIANT key, [in, optional] VARIANT varAsc);
+
+	/*! 根据给定的结构创建记录集
+	\param ver 指定记录集记录格式名称，ver 为 FolderMan 对象 AddDocField 时给定的版本名称*/
+	[id(15), helpstring("method Create")] HRESULT Create([in] BSTR ver);
+
+	/*! 返回记录集字段描述数组
+	\retval pVal 以 list 对象返回描述字段的数组*/
+	[propget, id(16), helpstring("property Fields")] HRESULT Fields([out, retval] IXList** pVal);
+
+	/*! 添加新的字段到已经存在的记录集
+	\param key 字段名称
+	\param type 字段数据类型，可能的数值有：vbString，vbBoolean，vbDate，vbSingle，vbDouble，vbInteger，vbLong*/
+	[id(17), helpstring("method AddField")] HRESULT AddField([in] BSTR key, [in] short type);
+
+	/*! 在存在的记录集指定的位置插入一个新的字段
+	\param pos 指定插入的位置
+	\param key 字段名称
+	\param type 字段数据类型，可能的数值有：vbString，vbBoolean，vbDate，vbSingle，vbDouble，vbInteger，vbLong*/
+	[id(18), helpstring("method InsertField")] HRESULT InsertField([in] int pos, [in] BSTR key, [in] short type);
+
+	/*! 删除指定位置的字段
+	\param pos 指定要删除的字段的序号*/
+	[id(19), helpstring("method RemoveField")] HRESULT RemoveField([in] int pos);
+
+	/*! 查询记录集记录的格式名称
+	\retval pVal 当前记录格式名称*/
+	[propget, id(20), helpstring("property FormatName")] HRESULT FormatName([out, retval] BSTR* pVal);
+
+	/*! 取出全部记录集某个字段的数据
+	\param key 指定要取出的字段名称
+	\retval pVal 指定字段的数据数组*/
+	[id(21), helpstring("property GetRows")] HRESULT GetRows([in] VARIANT key, [out, retval] VARIANT* pVal);
+};
+[
+	object,
+	uuid(A0D739E0-EC4D-4011-9F0C-8B557B4C780B),
+	dual,
+	nonextensible,
+	helpstring("IXDocItem Interface"),
+	pointer_default(unique)
+]
+interface IXDocItem : IDispatch{
+	[propget, id(1), helpstring("property UserName")] HRESULT UserName([out, retval] BSTR* pVal);
+	[propget, id(2), helpstring("property UserID")] HRESULT UserID([out, retval] LONG* pVal);
+	[propget, id(3), helpstring("property Emote")] HRESULT Emote([out, retval] SHORT* pVal);
+	[propget, id(4), helpstring("property Rate")] HRESULT Rate([out, retval] SHORT* pVal);
+	[propget, id(5), helpstring("property Host")] HRESULT Host([out, retval] BSTR* pVal);
+	[propget, id(6), helpstring("property IP")] HRESULT IP([out, retval] BSTR* pVal);
+	[id(7), helpstring("method Delete")] HRESULT Delete([in] BSTR strUser, [in, optional] VARIANT varSystem);
+	[id(8), helpstring("method Restore")] HRESULT Restore(void);
+	[id(9), helpstring("method isDel")] HRESULT isDel([out,retval] short* pval);
+	[propget, id(10), helpstring("property Hot")] HRESULT Hot([out, retval] short* pVal);
+	[propget, id(11), helpstring("property delTime")] HRESULT delTime([out, retval] DATE* pVal);
+	[propget, id(12), helpstring("property delTime")] HRESULT delUser([out, retval] BSTR* pVal);
+	[propget, id(13), helpstring("property updateTime")] HRESULT updateTime([out, retval] DATE* pVal);
+	[id(14), helpstring("method NewEdition")] HRESULT newContent([in] BSTR strText, [in] DATE date, [in, optional] VARIANT varLabel);
+	[id(15), helpstring("method newAttachment")] HRESULT newAttachment([in] BSTR filename);
+	[propget, id(16), helpstring("property Contents")] HRESULT Contents([out, retval] IXList** pVal);
+	[propget, id(17), helpstring("property Attachments")] HRESULT Attachments([out, retval] IXList** pVal);
+};
+[
+	object,
+	uuid(25ABA358-414B-49ED-A97E-8296D1CE6BC0),
+	dual,
+	nonextensible,
+	helpstring("IXDoc Interface"),
+	pointer_default(unique)
+]
+/*! \brief 格式化数据转储对象，内建基本帖子结构，可通过设定扩充字段和结构
+
+	可用于快速存储和加载格式化数据。创建方法：<b>Set doc = CreateObject("asptools.document")</b>
+*/
+interface IXDoc : IDispatch{
+	/*! 根据给定的键值查询和修改存储在结构内的变量，缺省属性
+	\param key 要查询的键值
+	\return 存储在结构内的变量*/
+	[propget, id(0), helpstring("property Item")] HRESULT Item([in] BSTR key, [out, retval] VARIANT* pVal);
+	[propput, id(0), helpstring("property Item")] HRESULT Item([in] BSTR key, [in] VARIANT newVal);
+
+	[id(1), helpstring("method Count")] HRESULT Count([out,retval] LONG* pval);
+	[propget, id(0xfffffffc), helpstring("property _NewEnum"), restricted] HRESULT _NewEnum([out, retval] IUnknown** pVal);
+	[id(2), helpstring("method Create")] HRESULT Create([in] BSTR ver);
+	[id(3), helpstring("method Load")] HRESULT Load([in] BSTR strPath);
+	[id(4), helpstring("method Open")] HRESULT Open([in] BSTR strPath, [in, optional] VARIANT varNew);
+	[id(5), helpstring("method Save")] HRESULT Save(void);
+	[id(6), helpstring("method Cose")] HRESULT Close(void);
+	[id(7), helpstring("property ConvertFormat")] HRESULT ConvertFormat([in] BSTR newFmt);
+	[propget, id(8), helpstring("property FormatName")] HRESULT FormatName([out, retval] BSTR* pVal);
+	[propget, id(9), helpstring("property Compressed")] HRESULT Compressed([out, retval] VARIANT_BOOL* pVal);
+	[propput, id(9), helpstring("property Compressed")] HRESULT Compressed([in] VARIANT_BOOL newVal);
+	[propget, id(10), helpstring("property TransMode")] HRESULT TransMode([out, retval] VARIANT_BOOL* pVal);
+	[propput, id(10), helpstring("property TransMode")] HRESULT TransMode([in] VARIANT_BOOL newVal);
+	[id(11), helpstring("method Remove")] HRESULT Remove([in] BSTR key);
+	[id(12), helpstring("method Exists")] HRESULT Exists([in] BSTR key, [out,retval] VARIANT_BOOL* pVal);
+	[propget, id(13), helpstring("property docs")] HRESULT docs([out, retval] IXList** pVal);
+	[id(14), helpstring("method Append")] HRESULT Append([in] BSTR user, [in] LONG id, [in] SHORT emote, [in] SHORT rate, [in] SHORT hot, [in] BSTR host, [in] BSTR ip, [out, retval] IXDocItem** pVal);
+	[id(15), helpstring("method RemoveDoc")] HRESULT RemoveDoc([in] long i);
+	[id(16), helpstring("property AddRecordset")] HRESULT AddRecordset([in] BSTR key, [in, optional] VARIANT varFmt, [out, retval] IXRecords** pVal);
+	[id(17), helpstring("method CountHost")] HRESULT CountHost([out,retval] long* pval);
+	[id(18), helpstring("method CountIP")] HRESULT CountIP([out,retval] long* pval);
+	[id(19), helpstring("method CountUser")] HRESULT CountUser([out,retval] long* pval);
+	[id(20), helpstring("method GetRate")] HRESULT CountRate([out,retval] long* pval);
+	[id(21), helpstring("method updateTime")] HRESULT updateTime([in] long nStart, [in] long nEnd, [out,retval] DATE* pval);
+	[id(22), helpstring("method HotRank")] HRESULT HotRank([in] long timeline, [in] long timeline1, [out,retval] double* pval);
+	[id(23), helpstring("method Expand")] HRESULT Expand(void);
+};
+[
+	object,
+	uuid(78C6B00D-A9A7-4DFD-9BED-E9A4C063901E),
+	dual,
+	nonextensible,
+	helpstring("IXDocContent Interface"),
+	pointer_default(unique)
+]
+interface IXDocContent : IDispatch{
+	[propget, id(1), helpstring("property Time")] HRESULT Time([out, retval] DATE* pVal);
+	[propput, id(1), helpstring("property Time")] HRESULT Time([in] DATE newVal);
+	[propget, id(2), helpstring("property Label")] HRESULT Label([out, retval] BSTR* pVal);
+	[propput, id(2), helpstring("property Label")] HRESULT Label([in] BSTR newVal);
+	[propget, id(3), helpstring("property Text")] HRESULT Text([out, retval] BSTR* pVal);
+	[propput, id(3), helpstring("property Text")] HRESULT Text([in] BSTR newVal);
+};
+[
+	object,
+	uuid(2758C6A7-5278-4B98-B53C-32B6C032F357),
+	dual,
+	nonextensible,
+	helpstring("IXDictionary Interface"),
+	pointer_default(unique)
+]
+/*! \brief 字典容器对象，用于存储键值和数值对应关系
+
+	创建方法：<b>Set doc = CreateObject("asptools.dictionary")</b>
+*/
+interface IXDictionary : IDispatch{
+	/*! 查询和设置字典内的数值，缺省方法
+	\param key 指定要查询和设置的数值对应的键值*/
+	[propget, id(0), helpstring("property Item")] HRESULT Item([in] VARIANT key, [out, retval] VARIANT* pVal);
+	[propput, id(0), helpstring("property Item")] HRESULT Item([in] VARIANT key, [in] VARIANT newVal);
+	[propputref, id(0), helpstring("property Item")] HRESULT Item([in] VARIANT key, [in] VARIANT newVal);
+	/*! 查询字典内的数值总数*/
+	[id(1), helpstring("method Count")] HRESULT Count([out,retval] LONG* pVal);
+	/*! 清除字典内指定键值的数值
+	\param key 指定要删除的数值对应的键值*/
+	[id(3), helpstring("method Remove")] HRESULT Remove([in] VARIANT key);
+	/*! 清除字典内全部数据*/
+	[id(4), helpstring("method RemoveAll")] HRESULT RemoveAll(void);
+	/*! 向字典内添加指定键值和数值
+	\param key 指定要添加的键值
+	\param value 指定要添加的数值*/
+	[id(5), helpstring("method Add")] HRESULT Add([in] VARIANT key, [in] VARIANT value);
+	/*! 查询字典内中是否存在指定的键值
+	\param key 指定要查询的键值*/
+	[id(6), helpstring("method Exists")] HRESULT Exists([in] VARIANT key, [out,retval] VARIANT_BOOL* pVal);
+	/*! 返回一个字符串，此字符串由包含在字典中的所有键值和数值的字符串连接创建
+	\param strKeyDelimiter 指定键值与数值之间的间隔字符串，缺省为“:”
+	\param strDelimiter 指定两对数值之间的间隔字符串，缺省为“,”*/
+	[id(7), helpstring("method Join")] HRESULT Join([in, optional] VARIANT strKeyDelimiter, [in, optional] VARIANT strDelimiter, [out, retval] BSTR* pVal);
+	/*! 恢复键值和数值的字符串描述的数据到字典中
+	\param bstrExpression 指定键值和数值的字符串
+	\param strKeyDelimiter 指定键值与数值之间的间隔字符串，缺省为“:”
+	\param strDelimiter 指定两对数值之间的间隔字符串，缺省为“,”*/
+	[id(8), helpstring("method Split")] HRESULT Split([in] BSTR bstrExpression, [in, optional] VARIANT strKeyDelimiter, [in, optional] VARIANT strDelimiter);
+	/*! 查询字典中的全部键值，以数组的形式返回*/
+	[propget, id(9), helpstring("property Keys")] HRESULT Keys([out, retval] VARIANT* pVal);
+	/*! 查询字典中的全部数值，以数组的形式返回*/
+	[propget, id(10), helpstring("property Items")] HRESULT Items([out, retval] VARIANT* pVal);
+	[propget, id(0xfffffffc), helpstring("property _NewEnum"), restricted] HRESULT _NewEnum([out, retval] IUnknown** pVal);
+};
+[
+	object,
+	uuid(A0D739E0-EC4D-4011-9F0C-8B557B4C7888),
+	dual,
+	nonextensible,
+	helpstring("IXUploadData Interface"),
+	pointer_default(unique)
+]
+interface IXUploadData : IDispatch{
+	[id(0x00000000), propget]
+	HRESULT Item([out, retval] VARIANT* pVariantReturn);
+	[id(0x00000001), propget]
+	HRESULT FileName([out, retval] BSTR* pStrReturn);
+	[id(0x00000002), propget]
+	HRESULT Size([out, retval] long* pVal);
+	[id(0x00000003), propget]
+	HRESULT ContentType([out, retval] BSTR* pStrReturn);
+};
+
+[
+  odl,
+  uuid(94659465-0049-5570-6C6F-61644C697374),
+  dual,
+  oleautomation
+]
+interface IXUploadList : IDispatch {
+	[id(0x00000000), propget]
+	HRESULT Item(
+					[in, optional] VARIANT i, 
+					[out, retval] VARIANT* pVariantReturn);
+	[id(0x60020001), propget]
+	HRESULT Count([out, retval] long* cStrRet);
+	[id(0xfffffffc), propget, restricted]
+	HRESULT _NewEnum([out, retval] IUnknown** ppEnumReturn);
+	[id(0x60020003), propget]
+	HRESULT FileName([out, retval] BSTR* pStrReturn);
+	[id(0x60020004), propget]
+	HRESULT Size([out, retval] long* pVal);
+	[id(0x60020005), propget]
+	HRESULT ContentType([out, retval] BSTR* pStrReturn);
+};
+[
+	object,
+	uuid(4F3EEDD5-437A-41AF-8AE8-FB80E5CBEE2E),
+	dual,
+	nonextensible,
+	helpstring("IXForm Interface"),
+	pointer_default(unique)
+]
+interface IXForm : IDispatch
+{
+	//Standard Server Side Component Methods
+	HRESULT OnStartPage([in] IUnknown* piUnk);
+	HRESULT OnEndPage();
+	[id(0x00000000), propget]
+	HRESULT Item(
+					[in] BSTR key, 
+					[out, retval] IXUploadList** pVariantReturn);
+	[id(0xfffffffc), propget, restricted]
+	HRESULT _NewEnum([out, retval] IUnknown** ppEnumReturn);
+	[id(0x60020002), propget]
+	HRESULT Count([out, retval] long* cStrRet);
+	[id(0x60020004)]
+	HRESULT Exists(
+					[in] BSTR key, 
+					[out, retval] VARIANT_BOOL* pExists);
+};
+[
+	object,
+	uuid(6278C1DA-0C9E-424E-8CF9-D76D2D556B43),
+	dual,
+	nonextensible,
+	helpstring("IXEncoding Interface"),
+	pointer_default(unique)
+]
+/*! \brief 格式转换对象，包含一组常用字符串、二进制格式转换方法
+
+	创建方法：<b>Set doc = CreateObject("asptools.encoding")</b>
+*/
+interface IXEncoding : IDispatch{
+	/*! Base32 解码
+	\param base32String 按照 Base32 格式编码的字符串
+	\return 解码后的二进制数据*/
+	[id(0x00000001)] HRESULT Base32Decode(
+					[in] BSTR base32String, 
+					[out, retval] VARIANT* retVal);
+	/*! Base32 编码
+	\param varData 要编码的二进制数据
+	\return 按照 Base32 格式编码的字符串*/
+	[id(0x00000002)] HRESULT Base32Encode(
+					[in] VARIANT varData, 
+					[out, retval] BSTR* retVal);
+	/*! Base64 解码
+	\param base64String 按照 Base64 格式编码的字符串
+	\return 解码后的二进制数据*/
+	[id(0x00000003)] HRESULT Base64Decode(
+					[in] BSTR base64String, 
+					[out, retval] VARIANT* retVal);
+	/*! Base64 编码
+	\param varData 要编码的二进制数据
+	\return 按照 Base64 格式编码的字符串*/
+	[id(0x00000004)] HRESULT Base64Encode(
+					[in] VARIANT varData, 
+					[out, retval] BSTR* retVal);
+	[id(0x00000005)]
+	HRESULT HtmlDecode(
+					[in] BSTR HtmlString, 
+					[out, retval] BSTR* retVal);
+	/*! Html 格式化，将输入的字符串按照指定的格式格式化，自动清除非法 tag，关闭未封口 tag
+	\param TextString 格式化的 html 字符串
+	\param varFormat 格式化输出格式，0: html，1: text，2: wap
+	\return 按照指定格式格式化后的字符串*/
+	[id(0x00000006)]
+	HRESULT HtmlFormat(
+					[in] BSTR TextString, 
+					[in, optional] VARIANT varFormat, 
+					[out, retval] BSTR* retVal);
+	[id(0x00000007)]
+	HRESULT JSEncode(
+					[in] BSTR TextString, 
+					[out, retval] BSTR* retVal);
+	[id(0x00000008)]
+	HRESULT UrlDecode(
+					[in] BSTR urlString, 
+					[out, retval] BSTR* retVal);
+	[id(0x00000009)]
+	HRESULT UrlEncode(
+					[in] BSTR urlString, 
+					[in, optional] VARIANT bDBCS, 
+					[out, retval] BSTR* retVal);
+	[id(0x0000000a)]
+	HRESULT QuotedDecode(
+					[in] BSTR QuotedString, 
+					[in, optional] VARIANT nCodePage, 
+					[out, retval] BSTR* retVal);
+	[id(0x0000000b)]
+	HRESULT QuotedEncode(
+					[in] BSTR txtString, 
+					[in, optional] VARIANT nCodePage, 
+					[out, retval] BSTR* retVal);
+	[id(0x0000000c)]
+	HRESULT GBK2GB(
+					[in] BSTR gbkStr, 
+					[out, retval] BSTR *gbStr);
+	[id(0x0000000d)]
+	HRESULT BinToStr(
+					[in] VARIANT varData, 
+					[in, optional] VARIANT nCodePage, 
+					[out, retval] BSTR* retVal);
+	[id(0x0000000e)]
+	HRESULT StrToBin(
+					[in] BSTR strData, 
+					[in, optional] VARIANT nCodePage, 
+					[out, retval] VARIANT* retVal);
+	[id(0x0000000f)]
+	HRESULT GMTDecode(
+					[in] BSTR GMTString, 
+					[out, retval] DATE* retVal);
+	[id(0x00000010)]
+	HRESULT GMTEncode(
+					[in] DATE varDate, 
+					[out, retval] BSTR* retVal);
+	[id(0x00000011)]
+	HRESULT HexDecode(
+					[in] BSTR HexString, 
+					[out, retval] VARIANT* retVal);
+	[id(0x00000012)]
+	HRESULT HexEncode(
+					[in] VARIANT varData, 
+					[out, retval] BSTR* retVal);
+	[id(0x00000013)]
+	HRESULT XCodeEncode(
+					[in] BSTR codeString, 
+					[in] BSTR key, 
+					[out, retval] BSTR* retVal);
+	[id(0x00000014)]
+	HRESULT XCodeDecode(
+					[in] BSTR codeString, 
+					[in, optional] VARIANT key, 
+					[out, retval] BSTR* retVal);
+	[id(0x00000015)]
+	HRESULT XmlEncode(
+					[in] BSTR txtString, 
+					[out, retval] BSTR* retVal);
+	[id(0x00000016)]
+	HRESULT XmlFilter(
+					[in] BSTR txtString, 
+					[out, retval] BSTR* retVal);
+	[id(0x00000017)]
+	HRESULT GetKeyword(
+					[in] BSTR txtString, 
+					[in, optional] VARIANT attr, 
+					[out, retval] VARIANT* pVal);
+	[id(0x00000018)]
+	HRESULT FixString(
+					[in] BSTR txtString, 
+					[in] short nLen, 
+					[out, retval] BSTR* pVal);
+	[id(0x00000019)]
+	HRESULT FixStringLen(
+					[in] BSTR txtString, 
+					[out, retval] LONG* pVal);
+	[id(0x0000001a)]
+	HRESULT FindString(
+					[in] VARIANT varStart, 
+					[in] BSTR txtString, 
+					[in, optional] VARIANT varFind, 
+					[out, retval] LONG* pVal);
+	/*! 修复字符串白字符，将字符串中显示为空白的字符更换为空格
+	\param txtString 要修复的字符串
+	\return 修复后的字符串*/
+	[id(0x0000001b)]
+	HRESULT FixSpace(
+					[in] BSTR txtString, 
+					[out, retval] BSTR* pVal);
+	/*! 按照给定的格式化字符串输出给定的参数
+	\param bstrFmtString 给定的格式化字符串，指定参数 %1-%9, %a-%z，为全部 35 个参数
+	\param bstr1...bstr9,bstra...bstrz 给定的全部 35 个参数，不足 35 个参数可以省略
+	\return 修复后的字符串*/
+	[id(0x0000001c)]
+	HRESULT FormatMessage(
+					[in] BSTR bstrFmtString, 
+					[in, optional] VARIANT bstr1, 
+					[in, optional] VARIANT bstr2, 
+					[in, optional] VARIANT bstr3, 
+					[in, optional] VARIANT bstr4, 
+					[in, optional] VARIANT bstr5, 
+					[in, optional] VARIANT bstr6, 
+					[in, optional] VARIANT bstr7, 
+					[in, optional] VARIANT bstr8, 
+					[in, optional] VARIANT bstr9, 
+					[in, optional] VARIANT bstra, 
+					[in, optional] VARIANT bstrb, 
+					[in, optional] VARIANT bstrc, 
+					[in, optional] VARIANT bstrd, 
+					[in, optional] VARIANT bstre, 
+					[in, optional] VARIANT bstrf, 
+					[in, optional] VARIANT bstrg, 
+					[in, optional] VARIANT bstrh, 
+					[in, optional] VARIANT bstri, 
+					[in, optional] VARIANT bstrj, 
+					[in, optional] VARIANT bstrk, 
+					[in, optional] VARIANT bstrl, 
+					[in, optional] VARIANT bstrm, 
+					[in, optional] VARIANT bstrn, 
+					[in, optional] VARIANT bstro, 
+					[in, optional] VARIANT bstrp, 
+					[in, optional] VARIANT bstrq, 
+					[in, optional] VARIANT bstrr, 
+					[in, optional] VARIANT bstrs, 
+					[in, optional] VARIANT bstrt, 
+					[in, optional] VARIANT bstru, 
+					[in, optional] VARIANT bstrv, 
+					[in, optional] VARIANT bstrw, 
+					[in, optional] VARIANT bstrx, 
+					[in, optional] VARIANT bstry, 
+					[in, optional] VARIANT bstrz, 
+					[out, retval] BSTR *bstrMessage
+					);
+};
+[
+	object,
+	uuid(25D909FA-4DEF-41E5-A3D8-5FE77D20C2B0),
+	dual,
+	nonextensible,
+	helpstring("IXHash Interface"),
+	pointer_default(unique)
+]
+interface IXHash : IDispatch{
+	[id(0x00000001), propget]
+	HRESULT Name([out, retval] BSTR* pVal);
+	[id(0x00000002), propget]
+	HRESULT HashSize([out, retval] short* pVal);
+	[id(0x00000003)]
+	HRESULT Create([in] BSTR bstrAlgo);
+	[id(0x00000004)]
+	HRESULT Update([in] VARIANT varData);
+	[id(0x00000000)]
+	HRESULT Final(
+					[in, optional] VARIANT varData, 
+					[out, retval] VARIANT* retVal);
+};
+[
+	object,
+	uuid(DE4CE0A5-66A4-420D-8776-0E550F51531D),
+	dual,
+	nonextensible,
+	helpstring("IXPicture Interface"),
+	pointer_default(unique)
+]
+/*!	\brief 图像处理对象，可装载，绘制，输出图像文件
+
+创建方法：set img = CreateObject("asptools.Picture")。
+
+对象支持的图像格式如下：<br>
+　1:BMP，包括的文件格式有：bmp,dib,rle<br>
+　2:GIF<br>
+　3:JPEG，包括的文件格式有：jpg,jpeg,jpe,jif,jfif<br>
+　4:PNG<br>
+　5:ICO，包括的文件格式有：ico,cur<br>
+　6:TIF，包括的文件格式有：tif,tiff<br>
+　6:TGA，包括的文件格式有：tga,targa<br>
+　7:PCX<br>
+　8:WBMP<br>
+　9:WMF，包括的文件格式有：wmf,emf<br>*/
+interface IXPicture : IDispatch{
+	/*! 从文件中装载图像到对象中
+	\param strFile 指定图像文件
+	\param varType 指定图像格式，省略则自动检测*/
+	[id(0x00000001)]
+	HRESULT Load(
+					[in] BSTR strFile, 
+					[in, optional] VARIANT varType);
+	/*! 将对象中的图像存储到文件中
+	\param strFile 指定图像文件
+	\param varType 指定图像格式，省略则根据文件名自动存储，如果文件名不可识别，则按照装载时的格式存储*/
+	[id(0x00000002)]
+	HRESULT Save(
+					[in] BSTR strFile, 
+					[in, optional] VARIANT varType);
+	/*! 从二进制数据中装载图像到对象中
+	\param varData 指定图像二进制数据
+	\param varType 指定图像格式，省略则自动检测*/
+	[id(0x00000003)]
+	HRESULT LoadFromData(
+					[in] VARIANT varData, 
+					[in, optional] VARIANT varType);
+	/*! 返回对象中的图像按指定格式存储的二进制数据
+	\param varType 指定图像格式，省略则按照装载时的格式存储
+	\return 返回指定格式的图像二进制块*/
+	[id(0x00000004)]
+	HRESULT GetImageData(
+					[in, optional] VARIANT varType, 
+					[out, retval] VARIANT* pVal);
+	/*! 从二进制位图数据中装载图像到对象中，装载前需要先创建图像
+	\param varData 指定图像二进制位图数据*/
+	[id(0x00000005)]
+	HRESULT LoadRawData([in] VARIANT varData);
+	/*! 从图像对象里面返回二进制位图数据
+	\return 指定图像二进制位图数据*/
+	[id(0x00000006)]
+	HRESULT GetRawData([out, retval] VARIANT* pVal);
+	/*! 从文件中装载图像信息到对象中，于 Load 不同的是此方法之解析图像的基本信息，不读取图像数据，可用于迅速查询图像尺寸、颜色等信息
+	\param strFile 指定图像文件
+	\param varType 指定图像格式，省略则自动检测*/
+	[id(0x00000007)]
+	HRESULT LoadInfo(
+					[in] BSTR strFile, 
+					[in, optional] VARIANT varType);
+	/*! 从二进制数据中装载图像信息到对象中，于 LoadFromData 不同的是此方法之解析图像的基本信息，不读取图像数据，可用于迅速查询图像尺寸、颜色等信息
+	\param varData 指定图像二进制数据
+	\param varType 指定图像格式，省略则自动检测*/
+	[id(0x00000008)]
+	HRESULT LoadInfoFromData(
+					[in] VARIANT varData, 
+					[in, optional] VARIANT varType);
+	/*! 在对象中创建一个指定宽高和色彩深度的图像
+	\param nWidth 指定图像宽度
+	\param nHeight 指定图像高度
+	\param Bpp 指定图像颜色深度，可以为 1, 4, 8, 24*/
+	[id(0x00000009)]
+	HRESULT Create(
+					[in] long nWidth, 
+					[in] long nHeight, 
+					[in] short Bpp);
+	/*! 清除图像对象中的图像，以黑色填充全部图像*/
+	[id(0x0000000a)]
+	HRESULT Clear(void);
+	/*! 查询图像对象中当前图像的格式*/
+	[id(0x0000000b), propget]
+	HRESULT Type([out, retval] short* pvar);
+	/*! 查询图像对象中当前图像的高度*/
+	[id(0x0000000c), propget]
+	HRESULT Height([out, retval] long* pvar);
+	/*! 查询图像对象中当前图像的宽度*/
+	[id(0x0000000d), propget]
+	HRESULT Width([out, retval] long* pvar);
+	/*! 查询和设置图像对象中当前图像的颜色深度，可能的数字为 1, 4, 8, 24*/
+	[id(0x0000000e), propget]
+	HRESULT Bpp([out, retval] short* pvar);
+	[id(0x0000000e), propput]
+	HRESULT Bpp([in] short var);
+	/*! 查询和设置图像对象中当前图像的压缩存储时的图像质量，范围为 0-100，100 为最高质量，缺省为 90*/
+	[id(0x0000000f), propget]
+	HRESULT Quality([out, retval] short* pvar);
+	[id(0x0000000f), propput]
+	HRESULT Quality([in] short var);
+	/*! 查询和设置图像对象中当前图像的透明颜色，为 -1 则不透明*/
+	[id(0x00000010), propget]
+	HRESULT TransparentColor([out, retval] long* pvar);
+	[id(0x00000010), propput]
+	HRESULT TransparentColor([in] long var);
+	/*! 查询图像对象中当前图像是否透明，透明则返回 True*/
+	[id(0x00000011)]
+	HRESULT IsTransparent([out, retval] VARIANT_BOOL* pvar);
+	/*! 用新的宽高根据当前对象内的图像创建一个新的图像对象
+	\param nWidth 指定新图像的宽度
+	\param nHeight 指定新图像的高度
+	\param varMode 设定拉伸模式，0:慢速，插值，1:快速，最近点，3:最接近值。缺省是1。最好的效果是3
+	\return 返回新图像对象*/
+	[id(0x00000012)]
+	HRESULT Resample(
+					[in] long nWidth, 
+					[in] long nHeight, 
+					[in, optional] VARIANT varMode, 
+					[out, retval] IXPicture **pvar);
+	/*! 生成一个当前图像的缩略图
+	\param nWidth 指定缩略图的宽度
+	\param nHeight 指定缩略图的高度
+	\return 返回缩略图图像对象*/
+	[id(0x00000013)]
+	HRESULT Thumbnail(
+					[in] long nWidth, 
+					[in] long nHeight, 
+					[out, retval] IXPicture **pvar);
+	/*! 复制一个新的图像对象
+	\return 返回新图像对象*/
+	[id(0x00000014)]
+	HRESULT Clone([out, retval] IXPicture **pvar);
+	/*! 按照指定的区域剪裁当前图像
+	\param left 指定缩略图的左边坐标
+	\param top 指定缩略图的顶边左边
+	\param left 指定缩略图的右边坐标
+	\param top 指定缩略图的下边坐标*/
+	[id(0x00000015)]
+	HRESULT Crop(
+					[in] long left, 
+					[in] long top, 
+					[in] long right, 
+					[in] long bottom);
+	/*! 按照指定的方向镜象当前图像
+	\param varDirection 指定镜象图像的方向，1:上下，2:左右，缺省为1*/
+	[id(0x00000016)]
+	HRESULT Flip([in, optional] VARIANT varDirection);
+	/*! 拉伸图像到指定的尺寸
+	\param nWidth 指定新图像的宽度
+	\param nHeight 指定新图像的高度
+	\param varMode 设定拉伸模式，0:慢速，插值，1:快速，最近点，3:最接近值。缺省是1。最好的效果是3*/
+	[id(0x00000017)]
+	HRESULT Resize(
+					[in] long nWidth, 
+					[in] long nHeight, 
+					[in, optional] VARIANT varMode);
+	/*! 将当前图像转换为灰度图像*/
+	[id(0x00000018)]
+	HRESULT GrayScale(void);
+	/*! 将当前图像按照其亮度转换成为指定颜色的饱和度图像
+	\param color 指定最终设定的颜色*/
+	[id(0x00000019)]
+	HRESULT Colorize([in] long color);
+	/*! 将当前图像按照指定的角度旋转
+	\param fAngle 指定旋转的角度，单位为角度x10，方向为逆时针，比如需要逆向旋转45度，则需指定角度为 450*/
+	[id(0x0000001a)]
+	HRESULT Rotate([in] long fAngle);
+	/*! 查询和设置填充颜色*/
+	[id(0x0000001b), propget]
+	HRESULT FillColor([out, retval] long* pvar);
+	[id(0x0000001b), propput]
+	HRESULT FillColor([in] long var);
+	/*! 查询和设置填充样式，>0 为花样，=0 为填充，<0 为不填充*/
+	[id(0x0000001c), propget]
+	HRESULT FillStyle([out, retval] short* pvar);
+	[id(0x0000001c), propput]
+	HRESULT FillStyle([in] short var);
+	/*! 查询和设置输出文字是否是粗体*/
+	[id(0x0000001d), propget]
+	HRESULT FontBold([out, retval] VARIANT_BOOL* pvar);
+	[id(0x0000001d), propput]
+	HRESULT FontBold([in] VARIANT_BOOL var);
+	/*! 查询和设置输出文字背景色*/
+	[id(0x0000001e), propget]
+	HRESULT FontBkColor([out, retval] long* pvar);
+	[id(0x0000001e), propput]
+	HRESULT FontBkColor([in] long var);
+	/*! 查询和设置输出文字是否填充背景*/
+	[id(0x0000001f), propget]
+	HRESULT FontBkMode([out, retval] VARIANT_BOOL* pvar);
+	[id(0x0000001f), propput]
+	HRESULT FontBkMode([in] VARIANT_BOOL var);
+	/*! 查询和设置输出文字颜色*/
+	[id(0x00000020), propget]
+	HRESULT FontColor([out, retval] long* pvar);
+	[id(0x00000020), propput]
+	HRESULT FontColor([in] long var);
+	/*! 查询和设置输出文字旋转角度，单位为角度x10，方向为逆时针，比如需要逆向旋转45度，则需指定角度为 450*/
+	[id(0x00000021), propget]
+	HRESULT FontEscapement([out, retval] long* pvar);
+	[id(0x00000021), propput]
+	HRESULT FontEscapement([in] long var);
+	/*! 查询和设置输出文字是否是斜体*/
+	[id(0x00000022), propget]
+	HRESULT FontItalic([out, retval] VARIANT_BOOL* pvar);
+	[id(0x00000022), propput]
+	HRESULT FontItalic([in] VARIANT_BOOL var);
+	/*! 查询和设置输出文字字体*/
+	[id(0x00000023), propget]
+	HRESULT FontName([out, retval] BSTR* pvar);
+	[id(0x00000023), propput]
+	HRESULT FontName([in] BSTR var);
+	/*! 查询和设置输出文字尺寸*/
+	[id(0x00000024), propget]
+	HRESULT FontSize([out, retval] short* pvar);
+	[id(0x00000024), propput]
+	HRESULT FontSize([in] short var);
+	/*! 查询和设置输出文字是否有下划线*/
+	[id(0x00000025), propget]
+	HRESULT FontUnderline([out, retval] VARIANT_BOOL* pvar);
+	[id(0x00000025), propput]
+	HRESULT FontUnderline([in] VARIANT_BOOL var);
+	/*! 查询和设置用于绘制的画笔颜色*/
+	[id(0x00000026), propget]
+	HRESULT PenColor([out, retval] long* pvar);
+	[id(0x00000026), propput]
+	HRESULT PenColor([in] long var);
+	/*! 查询和设置用于绘制的画笔样式*/
+	[id(0x00000027), propget]
+	HRESULT PenStyle([out, retval] short* pvar);
+	[id(0x00000027), propput]
+	HRESULT PenStyle([in] short var);
+	/*! 查询和设置用于绘制的画笔宽度*/
+	[id(0x00000028), propget]
+	HRESULT PenWidth([out, retval] short* pvar);
+	[id(0x00000028), propput]
+	HRESULT PenWidth([in] short var);
+	/*! 查询和设置输出文字的对其模式，0：左，2：右，6：中，0：上，8：下，24：基线*/
+	[id(0x00000029), propget]
+	HRESULT TextAlignment([out, retval] short* pvar);
+	[id(0x00000029), propput]
+	HRESULT TextAlignment([in] short var);
+	/*! 获取和设置图像调色板*/
+	[id(0x0000002a), propget]
+	HRESULT Palette([in, optional] VARIANT index, [out, retval] VARIANT* pvar);
+	[id(0x0000002a), propput]
+	HRESULT Palette([in, optional] VARIANT index, [in] VARIANT var);
+	/*! 读取某点颜色，和设置某点颜色(即画点)
+	\param x 横坐标
+	\param y 纵坐标*/
+	[id(0x0000002b), propget]
+	HRESULT Pixel(
+					[in] long x, 
+					[in] long y, 
+					[out, retval] long* pvar);
+	[id(0x0000002b), propput]
+	HRESULT Pixel(
+					[in] long x, 
+					[in] long y, 
+					[in] long var);
+	[id(0x0000002c)]
+	HRESULT DrawArc(
+					[in] long x1, 
+					[in] long y1, 
+					[in] long x2, 
+					[in] long y2, 
+					[in] long fromDegree, 
+					[in] long toDegree);
+	[id(0x0000002d)]
+	HRESULT DrawChord(
+					[in] long x1, 
+					[in] long y1, 
+					[in] long x2, 
+					[in] long y2, 
+					[in] long fromDegree, 
+					[in] long toDegree);
+	[id(0x0000002e)]
+	HRESULT DrawEllipse(
+					[in] long x1, 
+					[in] long y1, 
+					[in] long x2, 
+					[in] long y2);
+	[id(0x0000002f)]
+	HRESULT DrawLine(
+					[in] long x1, 
+					[in] long y1, 
+					[in] long x2, 
+					[in] long y2);
+	[id(0x00000030)]
+	HRESULT DrawPie(
+					[in] long x1, 
+					[in] long y1, 
+					[in] long x2, 
+					[in] long y2, 
+					[in] long fromDegree, 
+					[in] long toDegree);
+	[id(0x00000031)]
+	HRESULT DrawPolyBezier([in] VARIANT var);
+	[id(0x00000032)]
+	HRESULT DrawPolygon([in] VARIANT var);
+	[id(0x00000033)]
+	HRESULT DrawPolyline([in] VARIANT var);
+	[id(0x00000034)]
+	HRESULT DrawRectangle(
+					[in] long x1, 
+					[in] long y1, 
+					[in] long x2, 
+					[in] long y2);
+	[id(0x00000035)]
+	HRESULT DrawText(
+					[in] long x, 
+					[in] long y, 
+					[in] BSTR strText);
+	[id(0x00000036)]
+	HRESULT FloodFill(
+					[in] long x, 
+					[in] long y);
+	[id(0x00000037)]
+	HRESULT Paint(
+					[in] long x, 
+					[in] long y, 
+					[in] IXPicture *pImage);
+};
+[
+	object,
+	uuid(C7C8B7A3-4FFC-458E-97EC-F54323C3203E),
+	dual,
+	nonextensible,
+	helpstring("IXColorMan Interface"),
+	pointer_default(unique)
+]
+interface IXColorMan : IDispatch{
+	[propget, id(1), helpstring("property R")] HRESULT R([out, retval] SHORT* pVal);
+	[propput, id(1), helpstring("property R")] HRESULT R([in] SHORT newVal);
+	[propget, id(2), helpstring("property G")] HRESULT G([out, retval] SHORT* pVal);
+	[propput, id(2), helpstring("property G")] HRESULT G([in] SHORT newVal);
+	[propget, id(3), helpstring("property B")] HRESULT B([out, retval] SHORT* pVal);
+	[propput, id(3), helpstring("property B")] HRESULT B([in] SHORT newVal);
+	[propget, id(4), helpstring("property H")] HRESULT H([out, retval] SHORT* pVal);
+	[propput, id(4), helpstring("property H")] HRESULT H([in] SHORT newVal);
+	[propget, id(5), helpstring("property S")] HRESULT S([out, retval] SHORT* pVal);
+	[propput, id(5), helpstring("property S")] HRESULT S([in] SHORT newVal);
+	[propget, id(6), helpstring("property L")] HRESULT L([out, retval] SHORT* pVal);
+	[propput, id(6), helpstring("property L")] HRESULT L([in] SHORT newVal);
+	[propget, id(7), helpstring("property RGB")] HRESULT RGB([out, retval] LONG* pVal);
+	[propput, id(7), helpstring("property RGB")] HRESULT RGB([in] LONG newVal);
+	[propget, id(8), helpstring("property RGBString")] HRESULT RGBString([out, retval] BSTR* pVal);
+	[propput, id(8), helpstring("property RGBString")] HRESULT RGBString([in] BSTR newVal);
+};
+[
+	object,
+	uuid(97E4E42F-925C-4A70-8B93-CFD9F5E327AF),
+	dual,
+	nonextensible,
+	helpstring("IXBinaryFile Interface"),
+	pointer_default(unique)
+]
+interface IXBinaryFile : IDispatch{
+	[id(1), helpstring("method Create")] HRESULT Create([in] BSTR bstrName, [in, optional] VARIANT varOverwrite);
+	[id(2), helpstring("method Open")] HRESULT Open([in] BSTR bstrName, [in, optional] VARIANT varMode, [in, optional] VARIANT varShareMode);
+	[propget, id(3), helpstring("property EOF")] HRESULT EOF([out, retval] VARIANT_BOOL* pVal);
+	[propget, id(4), helpstring("property lastModify")] HRESULT lastModify([out, retval] DATE* pVal);
+	[propget, id(5), helpstring("property Position")] HRESULT Position([out, retval] DOUBLE* pVal);
+	[propput, id(5), helpstring("property Position")] HRESULT Position([in] DOUBLE newVal);
+	[propget, id(6), helpstring("property Size")] HRESULT Size([out, retval] DOUBLE* pVal);
+	[propput, id(6), helpstring("property Size")] HRESULT Size([in] DOUBLE newVal);
+	[propget, id(7), helpstring("property Compressed")] HRESULT Compressed([out, retval] VARIANT_BOOL* pVal);
+	[propput, id(7), helpstring("property Compressed")] HRESULT Compressed([in] VARIANT_BOOL newVal);
+	[id(8), helpstring("method Read")] HRESULT Read([in, optional] VARIANT varSize, [out,retval] VARIANT* pVal);
+	[id(9), helpstring("method Write")] HRESULT Write([in] VARIANT varData);
+	[id(10), helpstring("method WriteText")] HRESULT WriteText([in] BSTR strData, [in, optional] VARIANT varCodePage);
+	[id(11), helpstring("method ReadAllText")] HRESULT ReadAllText([in, optional] VARIANT varCodePage, [out, retval] BSTR* pVal);
+	[id(12), helpstring("method Truncate")] HRESULT Truncate(void);
+	[id(13), helpstring("method FlushBuffers")] HRESULT FlushBuffers(void);
+	[id(14), helpstring("method Close")] HRESULT Close(void);
+};
+[
+	object,
+	uuid(BEF4A14B-AF94-471A-AB3C-6E74BF886CCA),
+	dual,
+	nonextensible,
+	helpstring("IXChannel Interface"),
+	pointer_default(unique)
+]
+interface IXChannel : IDispatch{
+	[propget, id(0), helpstring("property Item")] HRESULT Item([in] VARIANT key, [out, retval] VARIANT* pVal);
+	[propput, id(0), helpstring("property Item")] HRESULT Item([in] VARIANT key, [in] VARIANT newVal);
+	[propputref, id(0), helpstring("property Item")] HRESULT Item([in] VARIANT key, [in] VARIANT newVal);
+	[propget, id(1), helpstring("property ID")] HRESULT Id([out, retval] long* pVal);
+	[propget, id(2), helpstring("property Path")] HRESULT Path([out, retval] BSTR* pVal);
+	[propget, id(3), helpstring("property Domain")] HRESULT Domain([out, retval] BSTR* pVal);
+	[propget, id(4), helpstring("property homepaeg")] HRESULT HomePage([out, retval] BSTR* pVal);
+	[propget, id(5), helpstring("property Mark")] HRESULT Mark([out, retval] BSTR* pVal);
+	[propget, id(6), helpstring("property Contents")] HRESULT Contents([out, retval] IXDictionary** pVal);
+	[propget, id(7), helpstring("property Subs")] HRESULT Subs([out, retval] IXList** pVal);
+	[propget, id(8), helpstring("property Parent")] HRESULT Parent([out, retval] IXChannel** pVal);
+};
+[
+	object,
+	uuid(BEF4A14B-AF94-471A-AB3C-6E74BFBBBCC9),
+	dual,
+	nonextensible,
+	helpstring("IXClass Interface"),
+	pointer_default(unique)
+]
+/*!	\brief 数据结构管理对象
+
+此对象不能独立创建，参见 TypeManager 的 newClass 方法。*/
+interface IXClass : IDispatch{
+	/*! 创建一个新的字段
+	\param key 指定字段名称
+	\param type 指定字段数据类型，可用的数据类型为：vbString，vbBoolean，vbDate，vbSingle，vbDouble，vbInteger，vbLong，vbObject。如果类型为 vbObject 则需要在创建后使用 Create 或者 ConvertFormat 设定此字段的对象类型
+	\return 数据结构管理对象*/
+	[id(1), helpstring("method AddField")] HRESULT AddField([in] BSTR key, [in] VARIANT type);
+
+	/*! 创建一个新的字段
+	\param key 指定字段名称
+	\param type 指定字段数据类型，如果类型为 vbObject 则需要在创建后使用 Create 或者 ConvertFormat 设定此字段的对象类型
+	\return 数据结构管理对象*/
+	[id(2), helpstring("method AddRecordset")] HRESULT AddRecordset([in] BSTR key, [in] VARIANT type);
+};
+[
+	object,
+	uuid(BEF4A14B-AFB4-471A-AB3C-6E74BFBBBCC9),
+	dual,
+	nonextensible,
+	helpstring("IXUrl Interface"),
+	pointer_default(unique)
+]
+interface IXUrl : IDispatch{
+	[propget, id(1), helpstring("property CityID")] HRESULT CityID([out, retval] long* pVal);
+	[propget, id(2), helpstring("property ClubID")] HRESULT ClubID([out, retval] long* pVal);
+	[propget, id(3), helpstring("property BoardID")] HRESULT BoardID([out, retval] long* pVal);
+	[propget, id(4), helpstring("property UserID")] HRESULT UserID([out, retval] long* pVal);
+	[propget, id(5), helpstring("property SubjectID")] HRESULT SubjectID([out, retval] long* pVal);
+	[propget, id(6), helpstring("property DocID")] HRESULT DocID([out, retval] long* pVal);
+	[propget, id(7), helpstring("property PageNo")] HRESULT PageNo([out, retval] BSTR* pVal);
+	[propget, id(8), helpstring("property path")] HRESULT path([out, retval] BSTR* pVal);
+	[propget, id(9), helpstring("property tag")] HRESULT tag([out, retval] BSTR* pVal);
+	[propget, id(10), helpstring("property script")] HRESULT script([out, retval] BSTR* pVal);
+};
+
+[
+  odl,
+  uuid(94659465-0000-0000-0000-004946696C65),
+  dual,
+  oleautomation
+]
+interface IXFile : IDispatch {
+	[id(0x00000000), propget]
+	HRESULT Path([out, retval] BSTR* pbstrPath);
+	[id(0x00000001), propget]
+	HRESULT Name([out, retval] BSTR* pbstrName);
+	[id(0x00000002), propget]
+	HRESULT Attributes([out, retval] short* pfa);
+	[id(0x00000003), propget]
+	HRESULT DateCreated([out, retval] DATE* pdate);
+	[id(0x00000004), propget]
+	HRESULT DateLastModified([out, retval] DATE* pdate);
+	[id(0x00000005), propget]
+	HRESULT DateLastAccessed([out, retval] DATE* pdate);
+	[id(0x00000006), propget]
+	HRESULT Size([out, retval] DOUBLE* pvarSize);
+	[id(0x00000007), propget]
+	HRESULT Type([out, retval] BSTR* pbstrType);
+	[id(0x00000008), propget]
+	HRESULT Files([out, retval] IXList** ppfiles);
+	[id(0x00000009), propget]
+	HRESULT SubFolders([out, retval] IXList** ppfolders);
+};
+
+[
+  odl,
+  uuid(94659465-0000-0220-0000-004946696C65),
+  dual,
+  oleautomation
+]
+interface IXPathBand : IDispatch {
+	[propget, id(0), helpstring("property Item")] HRESULT Item([in] LONG i, [out, retval] BSTR *pVal);
+	[propput, id(0), helpstring("property Item")] HRESULT Item([in] LONG i, [in] BSTR newVal);
+	[id(1), propget, helpstring("property BeginIndex")] HRESULT BeginIndex([out, retval] LONG* pVal);
+	[id(2), propget, helpstring("property EndIndex")] HRESULT EndIndex([out, retval] LONG* pVal);
+	[id(3), helpstring("method isReady")] HRESULT isReady([out, retval] VARIANT_BOOL* pVal);
+};
+
+[
+	object,
+	uuid(BEF4A14B-AF94-471A-AB3C-6E74BF886CC9),
+	dual,
+	nonextensible,
+	helpstring("IXFolderMan Interface"),
+	pointer_default(unique)
+]
+interface IXFolderMan : IDispatch{
+	[id(1), helpstring("method RemoveAll")] HRESULT ClearFolder(void);
+	[id(2), helpstring("method newBand")] HRESULT newBand([in] BSTR sType, [in] LONG nBegin, [in] LONG nEnd, [out, retval] IXPathBand** pVal);
+	[id(3), helpstring("method GetBand")] HRESULT GetBand([in] BSTR sType, [in] LONG nBegin, [in] LONG nEnd, [out, retval] IXPathBand** pVal);
+	[id(4), helpstring("method GetPath")] HRESULT GetPath([in] BSTR sType, [in] LONG i, [out, retval] BSTR* pVal);
+	[id(5), helpstring("method newDocBand")] HRESULT newDocBand([in] LONG nBegin, [in] LONG nEnd, [out, retval] IXPathBand** pVal);
+	[id(6), helpstring("method newUserBand")] HRESULT newUserBand([in] LONG nBegin, [in] LONG nEnd, [out, retval] IXPathBand** pVal);
+	[id(7), helpstring("method newBoardBand")] HRESULT newBoardBand([in] LONG nBegin, [in] LONG nEnd, [out, retval] IXPathBand** pVal);
+	[id(8), helpstring("method newDataBand")] HRESULT newDataBand([in] LONG nBegin, [in] LONG nEnd, [out, retval] IXPathBand** pVal);
+	[id(9), helpstring("method GetDocBand")] HRESULT GetDocBand([in] LONG nBegin, [in] LONG nEnd, [out, retval] IXPathBand** pVal);
+	[id(10), helpstring("method GetUserBand")] HRESULT GetUserBand([in] LONG nBegin, [in] LONG nEnd, [out, retval] IXPathBand** pVal);
+	[id(11), helpstring("method GetBoardBand")] HRESULT GetBoardBand([in] LONG nBegin, [in] LONG nEnd, [out, retval] IXPathBand** pVal);
+	[id(12), helpstring("method GetDataBand")] HRESULT GetDataBand([in] LONG nBegin, [in] LONG nEnd, [out, retval] IXPathBand** pVal);
+	[id(13), helpstring("method GetDocPath")] HRESULT GetDocPath([in] LONG i, [out, retval] BSTR* pVal);
+	[id(14), helpstring("method GetUserPath")] HRESULT GetUserPath([in] LONG i, [out, retval] BSTR* pVal);
+	[id(15), helpstring("method GetBoardPath")] HRESULT GetBoardPath([in] LONG i, [out, retval] BSTR* pVal);
+	[id(16), helpstring("method GetDataPath")] HRESULT GetDataPath([in] LONG i, [out, retval] BSTR* pVal);
+	[id(17), helpstring("method ClearChannel")] HRESULT ClearChannel(void);
+	[id(18), helpstring("method AddChannel")] HRESULT AddChannel([in] LONG id, [in] BSTR path, [in] BSTR domain, [in] BSTR homepage, [in] BSTR mark, [in] BSTR folder, [out, retval] IXChannel** pVal);
+	[id(19), helpstring("method BatchAddChannel")] HRESULT BatchAddChannel([in] BSTR batchText);
+	[id(20), helpstring("method GetChannel")] HRESULT GetChannel([in] LONG id, [out,retval] IXChannel** pVal);
+	[id(21), helpstring("method GetChannelFromDomain")] HRESULT GetChannelFromDomain([in] BSTR strDomain, [out,retval] IXChannel** pVal);
+	[id(22), helpstring("method FileExists")] HRESULT FileExists([in] BSTR fn, [out, retval] VARIANT_BOOL* pVal);
+	[id(23), helpstring("method GetFile")] HRESULT GetFile([in] BSTR FilePath, [out, retval] IXFile** ppfile);
+	[id(24), helpstring("method GetFiles")] HRESULT GetFiles([in] BSTR FilePath, [out, retval] IXList** ppfiles);
+	[id(25), helpstring("method DeleteFile")] HRESULT DeleteFile([in] BSTR FileSpec, [in, optional] VARIANT bForce, [out, retval] LONG* pVal);
+	[id(26), helpstring("method MoveFile")] HRESULT MoveFile([in] BSTR Source, [in] BSTR Destination);
+	[id(27), helpstring("method CopyFile")] HRESULT CopyFile([in] BSTR Source, [in] BSTR Destination, [in, optional] VARIANT bOverwrite);
+	[id(28), helpstring("method CreateFolder")] HRESULT CreateFolder([in] BSTR FileSpec);
+	[id(39), helpstring("method DeleteFolder")] HRESULT DeleteFolder([in] BSTR FileSpec);
+	[id(30), helpstring("method ParseUrl")] HRESULT ParseUrl([in] BSTR path, [out, retval] IXUrl** pVal);
+	[id(31), helpstring("method isISAPIInstalled")] HRESULT isISAPIInstalled([out, retval] VARIANT_BOOL* pVal);
+	[id(32), helpstring("method CountConnection")] HRESULT CountConnection([in] BSTR Addr, [in] LONG port, [out, retval] LONG* pVal);
+};
+[
+	object,
+	uuid(2DE45859-8289-44CC-8597-5758AC989D04),
+	dual,
+	nonextensible,
+	helpstring("IXSessionMan Interface"),
+	pointer_default(unique)
+]
+interface IXSessionMan : IDispatch{
+	[id(1), helpstring("method AppendField")] HRESULT AddField([in] BSTR key, [in] SHORT type, [in, optional] VARIANT varIndex);
+	[id(2), helpstring("method StartBroadcast")] HRESULT StartBroadcast([in] BSTR strNetwork, [in] BSTR strCastIP, [in] int port);
+	[id(3), helpstring("method ListUser")] HRESULT ListUser([in] BSTR leadChar, [out,retval] IXList** pVal);
+	[id(4), helpstring("method CountUser")] HRESULT CountUser([in] BSTR leadChar, [out,retval] long* pVal);
+	[id(5), helpstring("method ListWhere")] HRESULT ListWhere([in] BSTR key, [in] BSTR op, [in] VARIANT v1, [in, optional] VARIANT v2, [out,retval] IXList** pVal);
+	[id(6), helpstring("method CountWhere")] HRESULT CountWhere([in] BSTR key, [in] BSTR op, [in] VARIANT v1, [in, optional] VARIANT v2, [out,retval] long* pVal);
+	[id(7), helpstring("method ExistsWhere")] HRESULT ExistsWhere([in] BSTR key, [in] BSTR op, [in] VARIANT v1, [in, optional] VARIANT v2, [out,retval] VARIANT_BOOL* pVal);
+	[id(8), helpstring("method UpdateWhere")] HRESULT UpdateWhere([in] BSTR key, [in] VARIANT newVal, [in] BSTR whereKey, [in] BSTR op, [in] VARIANT v1, [in, optional] VARIANT v2);
+	[id(10), helpstring("method FireEvent")] HRESULT FireEvent([in] BSTR strEvent, [in, optional] VARIANT v1, [in, optional] VARIANT v2, [in, optional] VARIANT v3, [in, optional] VARIANT v4, [in, optional] VARIANT v5, [in, optional] VARIANT v6, [in, optional] VARIANT v7, [in, optional] VARIANT v8);
+	[id(11), helpstring("method SetTimer")] HRESULT SetTimer([in] LONG Val);
+	[id(12), helpstring("method ClearSession")] HRESULT ClearSession(void);
+	[id(13), helpstring("property Count")] HRESULT CountOnline([out, retval] LONG* pVal);
+	[id(14), helpstring("property Count")] HRESULT CountLocal([out, retval] LONG* pVal);
+	[id(15), helpstring("property Count")] HRESULT CountSession([out, retval] LONG* pVal);
+	[propget, id(16), helpstring("property OnlineTimeout")] HRESULT OnlineTimeout([out, retval] LONG* pVal);
+	[propput, id(16), helpstring("property OnlineTimeout")] HRESULT OnlineTimeout([in] LONG newVal);
+	[propget, id(17), helpstring("property SuspendTimeout")] HRESULT SuspendTimeout([out, retval] LONG* pVal);
+	[propput, id(17), helpstring("property SuspendTimeout")] HRESULT SuspendTimeout([in] LONG newVal);
+	[propget, id(18), helpstring("property SessionTimeout")] HRESULT SessionTimeout([out, retval] LONG* pVal);
+	[propput, id(18), helpstring("property SessionTimeout")] HRESULT SessionTimeout([in] LONG newVal);
+	[propget, id(19), helpstring("property SessionDomain")] HRESULT SessionDomain([out, retval] BSTR* pVal);
+	[propput, id(19), helpstring("property SessionDomain")] HRESULT SessionDomain([in] BSTR newVal);
+	[propget, id(20), helpstring("property SessionKey")] HRESULT SessionKey([out, retval] BSTR* pVal);
+	[propput, id(20), helpstring("property SessionKey")] HRESULT SessionKey([in] BSTR newVal);
+	[propget, id(21), helpstring("property ComputerName")] HRESULT ComputerName([out, retval] BSTR* pVal);
+	[propget, id(22), helpstring("property Version")] HRESULT Version([out, retval] BSTR* pVal);
+	[propget, id(23), helpstring("property Debug")] HRESULT Debug([out, retval] int* pVal);
+	[id(24), helpstring("method Execute")] HRESULT Execute([in] BSTR strEvent, [in, optional] VARIANT v1, [in, optional] VARIANT v2, [in, optional] VARIANT v3, [in, optional] VARIANT v4, [in, optional] VARIANT v5, [in, optional] VARIANT v6, [in, optional] VARIANT v7, [in, optional] VARIANT v8, [out, retval] VARIANT* pVal);
+};
+[
+	object,
+	uuid(68BA970C-A64F-4F94-A0AE-8C0CEDA7EB51),
+	dual,
+	nonextensible,
+	helpstring("IXSession Interface"),
+	pointer_default(unique)
+]
+interface IXSession : IDispatch
+{
+	//Standard Server Side Component Methods
+	HRESULT OnStartPage([in] IUnknown* piUnk);
+	HRESULT OnEndPage();	
+	[propget, id(0), helpstring("property Item")] HRESULT Item([in] VARIANT key, [out, retval] VARIANT* pVal);
+	[propput, id(0), helpstring("property Item")] HRESULT Item([in] VARIANT key, [in] VARIANT newVal);
+	[propputref, id(0), helpstring("property Item")] HRESULT Item([in] VARIANT key, [in] VARIANT newVal);
+	[propget, id(1), helpstring("property LastAccessTime")] HRESULT LastAccessTime([out, retval] DATE* pVal);
+	[propget, id(2), helpstring("property LastModifyTime")] HRESULT LastModifyTime([out, retval] DATE* pVal);
+	[propget, id(3), helpstring("property AccessTimes")] HRESULT AccessTimes([out, retval] long* pVal);
+	[propget, id(4), helpstring("property Contents")] HRESULT Contents([out, retval] IXDictionary** pVal);
+	[propget, id(5), helpstring("property Count")] HRESULT Count([out, retval] LONG* pVal);
+	[propget, id(6), helpstring("property SessionID")] HRESULT SessionID([out, retval] BSTR* pVal);
+	[propget, id(7), helpstring("property isActived")] HRESULT isActived([out, retval] VARIANT_BOOL* pVal);
+	[propget, id(8), helpstring("property isLocal")] HRESULT isLocal([out, retval] VARIANT_BOOL* pVal);
+	[id(9), helpstring("method isNewSession")] HRESULT isNewSession([out, retval] VARIANT_BOOL* pVal);
+	[propget, id(10), helpstring("property Application")] HRESULT Application([out, retval] IDispatch** pVal);
+	[id(11), helpstring("method Remove")] HRESULT Remove([in] VARIANT key);
+	[id(12), helpstring("method RemoveAll")] HRESULT RemoveAll(void);
+	[id(13), helpstring("method GetSession")] HRESULT GetSession([in] BSTR bstrID);
+	[id(15), helpstring("method Suspend")] HRESULT Suspend(void);
+	[id(16), helpstring("method Update")] HRESULT Update(void);
+	[id(17), helpstring("method Abandon")] HRESULT Abandon(void);
+	[id(18), helpstring("method Execute")] HRESULT Execute([in] BSTR strEvent, [in, optional] VARIANT v1, [in, optional] VARIANT v2, [in, optional] VARIANT v3, [in, optional] VARIANT v4, [in, optional] VARIANT v5, [in, optional] VARIANT v6, [in, optional] VARIANT v7, [in, optional] VARIANT v8, [out, retval] VARIANT* pVal);
+	[id(19), helpstring("method Rnd")] HRESULT Rnd([out, retval] long* pVal);
+};
+[
+	object,
+	uuid(BFA97734-9404-4143-B2DB-A8576654323E),
+	dual,
+	nonextensible,
+	helpstring("IXLRUCache Interface"),
+	pointer_default(unique)
+]
+interface IXLRUCache : IDispatch{
+	[propget, id(0), helpstring("property Item")] HRESULT Item([in] VARIANT key, [out, retval] VARIANT* pVal);
+	[propput, id(0), helpstring("property Item")] HRESULT Item([in] VARIANT key, [in] VARIANT newVal);
+	[propputref, id(0), helpstring("property Item")] HRESULT Item([in] VARIANT key, [in] VARIANT newVal);
+	[id(1), helpstring("method GetItem")] HRESULT GetItem([in] VARIANT key, [out, retval] VARIANT* pVal);
+	[id(2), helpstring("method Pop")] HRESULT Pop([in] VARIANT key, [out, retval] VARIANT* pVal);
+	[id(3), helpstring("method Count")] HRESULT Count([out,retval] LONG* pVal);
+	[id(4), helpstring("method Remove")] HRESULT Remove([in] VARIANT key);
+	[id(5), helpstring("method RemoveAll")] HRESULT RemoveAll(void);
+	[id(6), helpstring("method Add")] HRESULT Add([in] VARIANT key, [in] VARIANT value);
+	[id(7), helpstring("method Exists")] HRESULT Exists([in] VARIANT key, [out,retval] VARIANT_BOOL* pVal);
+	[propget, id(8), helpstring("property MaxSize")] HRESULT MaxSize([out, retval] LONG* pVal);
+	[propput, id(8), helpstring("property MaxSize")] HRESULT MaxSize([in] LONG newVal);
+	[propget, id(9), helpstring("property Timeout")] HRESULT Timeout([out, retval] LONG* pVal);
+	[propput, id(9), helpstring("property Timeout")] HRESULT Timeout([in] LONG newVal);
+	[propget, id(10), helpstring("property MaxTime")] HRESULT MaxTime([out, retval] LONG* pVal);
+	[propget, id(11), helpstring("property HitRate")] HRESULT HitRate([out, retval] float* pVal);
+	[propget, id(0xfffffffc), helpstring("property _NewEnum"), restricted] HRESULT _NewEnum([out, retval] IUnknown** pVal);
+};
+[
+	object,
+	uuid(F1C8EE88-C686-47AE-AAE9-D09DA55B5D24),
+	dual,
+	nonextensible,
+	helpstring("IXRsa Interface"),
+	pointer_default(unique)
+]
+interface IXRsa : IDispatch{
+	[id(0x00000001), propget]
+	HRESULT IsPrivateKey([out, retval] VARIANT_BOOL* pVal);
+	[id(0x00000002), propget]
+	HRESULT Key([out, retval] VARIANT* pVal);
+	[id(0x00000003), propget]
+	HRESULT KeySize([out, retval] short* pVal);
+	[id(0x00000004), propget]
+	HRESULT Padding([out, retval] short* pVal);
+	[id(0x00000004), propput]
+	HRESULT Padding([in] short pVal);
+	[id(0x00000005), propget]
+	HRESULT PrivateKey([out, retval] VARIANT* pVal);
+	[id(0x00000005), propput]
+	HRESULT PrivateKey([in] VARIANT pVal);
+	[id(0x00000006), propget]
+	HRESULT PublicKey([out, retval] VARIANT* pVal);
+	[id(0x00000006), propput]
+	HRESULT PublicKey([in] VARIANT pVal);
+	[id(0x00000007)]
+	HRESULT Decrypt(
+					[in] VARIANT varData, 
+					[out, retval] VARIANT* pVal);
+	[id(0x00000008)]
+	HRESULT Encrypt(
+					[in] VARIANT varData, 
+					[out, retval] VARIANT* pVal);
+	[id(0x00000009)]
+	HRESULT GenerateKey([in, optional] VARIANT varSize);
+};
+[
+	object,
+	uuid(C85B94EC-1D71-4738-8414-AAABECABA11F),
+	dual,
+	nonextensible,
+	helpstring("IXGeoPoint Interface"),
+	pointer_default(unique)
+]
+/*!	\brief 地理坐标对象，用于转换坐标体系，查询地理信息
+
+	此对象不可直接创建，只可由 GeoTools 对象创建并返回。
+*/
+interface IXGeoPoint : IDispatch{
+	/*! 查询和设置坐标的纬度*/
+	[propget, id(1), helpstring("property Latitude")] HRESULT Latitude([out, retval] double* pVal);
+	[propput, id(1), helpstring("property Latitude")] HRESULT Latitude([in] double newVal);
+	/*! 查询和设置坐标的经度*/
+	[propget, id(2), helpstring("property Longitude")] HRESULT Longitude([out, retval] double* pVal);
+	[propput, id(2), helpstring("property Longitude")] HRESULT Longitude([in] double newVal);
+	/*! 查询当前坐标体系，0 为标准坐标，1 为国内坐标*/
+	[propget, id(3), helpstring("property Datium")] HRESULT Datium([out, retval] int* pVal);
+	/*! 转换坐标体系
+	\param newVal 目的坐标体系，0 为标准坐标，1 为国内坐标*/
+	[id(4), helpstring("property ConvertDatium")] HRESULT ConvertDatium([in] int newVal);
+	/*! 计算两点距离
+	\param pTo 要计算距离的目标点坐标
+	\return 返回两点间的距离，单位为“米”*/
+	[id(5), helpstring("property GetDistance")] HRESULT GetDistance([in] IXGeoPoint* pTo, [out, retval] double* pVal);
+	/*! 查询当前点的行政区划信息
+	\return 返回一维数组，内容依次为：id，名称，简称，英文，详细*/
+	[id(6), helpstring("property CityInfo")] HRESULT CityInfo([out, retval] VARIANT* pVal);
+};
+[
+	object,
+	uuid(C85B94EC-1D71-4738-8414-000BECABA11F),
+	dual,
+	nonextensible,
+	helpstring("IXGeoTools Interface"),
+	pointer_default(unique)
+]
+interface IXGeoTools : IDispatch{
+	[id(1), helpstring("method Point")] HRESULT Point([in] int Datium, [in, optional] VARIANT Latitude, [in, optional] VARIANT Longitude, [out, retval] IXGeoPoint** pVal);
+};
+[
+	object,
+	uuid(8289B821-635F-4D3D-8C91-5CFFF50ECA2E),
+	dual,
+	nonextensible,
+	helpstring("IXLuckyLink Interface"),
+	pointer_default(unique)
+]
+interface IXLuckyLink : IDispatch{
+	[propget, id(1), helpstring("property halfLife")] HRESULT halfLife([out, retval] int* pVal);
+	[propput, id(1), helpstring("property halfLife")] HRESULT halfLife([in] int newVal);
+	[propget, id(2), helpstring("property Count")] HRESULT Count([out, retval] int* pVal);
+	[id(3), helpstring("method AddItem")] HRESULT AddItem([in] BSTR mark, [in] double life, [in] DATE time, [in] int id, [in] BSTR value);
+	[id(4), helpstring("method BatchAdd")] HRESULT BatchAdd([in] BSTR batchText);
+	[id(5), helpstring("method RemoveItem")] HRESULT RemoveItem([in] int id);
+	[id(6), helpstring("method RemoveAll")] HRESULT RemoveAll();
+	[id(7), helpstring("method GetList")] HRESULT GetList([in] BSTR mark, [in] int nCount, [in, optional] VARIANT seed, [out, retval] VARIANT* pVal);
+};
+[
+	object,
+	uuid(BD00238D-3DF3-41BB-8885-0C179A5BC005),
+	dual,
+	nonextensible,
+	helpstring("IXGeoLinks Interface"),
+	pointer_default(unique)
+]
+/*!	\brief 本地化推荐引擎，用于缓存推荐数据，并根据推荐中心随机或按规则推荐内容
+*/
+interface IXGeoLinks : IDispatch{
+	/*! 指定推荐池内的数据的时间衰减速度，单位为小时，缺省为 10，可读写*/
+	[propget, id(1), helpstring("property halfLife")] HRESULT halfLife([out, retval] int* pVal);
+	[propput, id(1), helpstring("property halfLife")] HRESULT halfLife([in] int newVal);
+	/*! 指定推荐池内的数据的距离衰减速度，单位为公里，缺省为 1，可读写*/
+	[propget, id(2), helpstring("property halfRange")] HRESULT halfRange([out, retval] int* pVal);
+	[propput, id(2), helpstring("property halfRange")] HRESULT halfRange([in] int newVal);
+	/*! 查询推荐系统中数据个数*/
+	[propget, id(3), helpstring("property Count")] HRESULT Count([out, retval] int* pVal);
+	/*! 开始修改缓存，引擎本身不能直接修改，需对调用此方法生成的新对象进行修改
+	\return 用于修改内容的临时对象*/
+	[id(4), helpstring("method Modify")] HRESULT Modify([out, retval] IXGeoLinks** pVal);
+	/*! 提交刚做出的修改，只可对 Modify 方法生成的临时修改对象上调用，用于将对临时对象所做出的修改提交到推荐引擎中*/
+	[id(5), helpstring("method Commit")] HRESULT Commit(void);
+	/*! 添加新内容到临时对象中，此方法不能直接使用于推荐对象本身，只可对 Modify 产生的临时对象调用
+	\param id 唯一标识 id，用于唯一标识一个推荐单元，目前推荐使用讨论版 id。如果提交数据的 id 已经存在，将替换成为新提交的数据
+	\param cityid 标识数据所在的城市 id
+	\param Latitude 数据所在地理位置的纬度
+	\param Longitude 数据所在地理位置的经度
+	\param type 数据类型，目前设定为后台推荐类型，推荐时可使用模板调整各类别的推荐比例
+	\param mark 数据所在的分类标识，数据来源为频道分类的标识字符串
+	\param tag 数据所属的标签，数据来源为讨论版主标签，多个 tag 间用空格分割，第一个为主 tag
+	\param life 数据的热度，用于决定数据的推荐系数，此数据将根据 time 以半衰方式自动减弱
+	\param time 指定 life 所产生的时间，用于指示推荐引擎衰减 life 的时间起点
+	\param value 数据本身，最终引擎中所返回的数据序列其它数据仅用于引擎工作，不会作为数据返回*/
+	[id(6), helpstring("method AddItem")] HRESULT AddItem(
+				[in] int id,
+				[in] int cityid,
+				[in] double Latitude,
+				[in] double Longitude,
+				[in] int type,
+				[in] BSTR mark,
+				[in] BSTR tag,
+				[in] double life,
+				[in] DATE time,
+				[in] BSTR value);
+	/*! 清除引擎内指定 id 的数据，清除的数据暂时不再推荐，并在下次提交修改时彻底清除
+	\param id 标示要删除的数据的 id*/
+	[id(7), helpstring("method Remove")] HRESULT Remove([in] int id);
+	/*! 清除引擎内指定全部数据，此方法不能直接使用于推荐对象本身，只可对 Modify 产生的临时对象调用，全部清除将初始化对象内部基准时间*/
+	[id(8), helpstring("method RemoveAll")] HRESULT RemoveAll();
+	/*! 批量添加数据到推荐引擎，此方法不能直接使用于推荐对象本身，只可对 Modify 产生的临时对象调用
+	\param batchText 批量提交的数据的文本，每行文本为一条数据，每条数据以 tab 字符分割参数。参数顺序与 AddItem 方法相同，life <= 0 删除当前记录 id 的数据*/
+	[id(9), helpstring("method BatchAdd")] HRESULT BatchAdd([in] BSTR batchText);
+	/*! 按照要求从保存数据中推荐数据
+	\param cityid 推荐数据所在的城市 id
+	\param Latitude 推荐数据中心所在地理位置的纬度
+	\param Longitude 推荐数据中心所在地理位置的经度
+	\param mark 要求推荐数据的分类标识，数据来源为频道分类的标识字符串
+	\param tag 要求推荐数据的标签
+	\param key 要求推荐数据的过滤关键词，只有 value 里面包含此关键词的数据会被推荐，多关键词用空格分隔
+	\param nStart 要求返回推荐后的数据跳过的条目
+	\param nCount 要求推荐出的数据条数
+	\param Types 基本推荐模板，用于指定此次推荐各种类型的数据的推荐系数
+	\param mode 推荐模式，指定推荐时内容组织方式，可以是下面的参数组合相加：0:随机，1:排序；0:扩展，2:本地；0:仅推荐主tag，4:在所有tag中推荐；0:本地优先，8:地区平等；0:包含兄弟地区，16:仅包含上级地区
+	\param seed 随机数种子，指定推荐时随机数的初始种子，省略则完全随机
+	\return 返回获取的数据数组*/
+	[id(10), helpstring("method GetList")] HRESULT GetList(
+				[in] int cityid,
+				[in] double Latitude,
+				[in] double Longitude,
+				[in] BSTR mark,
+				[in] BSTR tag,
+				[in] BSTR key,
+				[in] int nStart,
+				[in] int nCount,
+				[in] BSTR Types,
+				[in] int mode,
+				[in, optional] VARIANT seed,
+				[out, retval] VARIANT* pVal);
+	/*! 按照要求从保存数据中推荐数据，每个城市仅推荐一条
+	\param cityid 推荐数据所在的城市 id
+	\param mark 要求推荐数据的分类标识，数据来源为频道分类的标识字符串
+	\param tag 要求推荐数据的标签
+	\param nStart 要求返回推荐后的数据跳过的条目
+	\param nCount 要求推荐出的数据条数
+	\param Types 基本推荐模板，用于指定此次推荐各种类型的数据的推荐系数
+	\return 返回获取的数据数组，每条纪录的地区信息用 cityid + tab 的格式增加在纪录前面*/
+	[id(11), helpstring("method GetCityList")] HRESULT GetCityList(
+				[in] int cityid,
+				[in] BSTR mark,
+				[in] BSTR tag,
+				[in] int nStart,
+				[in] int nCount,
+				[in] BSTR Types,
+				[out, retval] VARIANT* pVal);
+	/*! 按照要求从保存数据中推荐数据，每个 tag 仅推荐一条
+	\param cityid 推荐数据所在的城市 id
+	\param mark 要求推荐数据的分类标识，数据来源为频道分类的标识字符串
+	\param nStart 要求返回推荐后的数据跳过的条目
+	\param nCount 要求推荐出的数据条数
+	\param Types 基本推荐模板，用于指定此次推荐各种类型的数据的推荐系数
+	\return 返回获取的数据数组，每条纪录的 tag 用 tag + tab 的格式增加在纪录前面*/
+	[id(12), helpstring("method GetTagList")] HRESULT GetTagList(
+				[in] int cityid,
+				[in] BSTR mark,
+				[in] int nStart,
+				[in] int nCount,
+				[in] BSTR Types,
+				[out, retval] VARIANT* pVal);
+	/*! 按照要求从保存数据中推荐tag热度排名
+	\param cityid 推荐数据所在的城市 id
+	\param mark 要求推荐数据的分类标识，数据来源为频道分类的标识字符串
+	\param tag 要求推荐数据的标签
+	\param nStart 要求返回推荐后的数据跳过的条目
+	\param nCount 要求推荐出的数据条数
+	\return 返回获取的数据数组，每条纪录的格式为 tag + tab + 数字*/
+	[id(13), helpstring("method GetHotTag")] HRESULT GetHotTag(
+				[in] int cityid,
+				[in] BSTR mark,
+				[in] BSTR tag,
+				[in] int nStart,
+				[in] int nCount,
+				[out, retval] VARIANT* pVal);
+};
+[
+	object,
+	uuid(9B5B4959-BE0F-4FA6-A73B-2794C0542349),
+	dual,
+	nonextensible,
+	helpstring("IXTypeManager Interface"),
+	pointer_default(unique)
+]
+/*!	\brief 数据结构管理对象，用于创建和管理格式化文件的格式，和内存数据库格式的创建
+
+	创建方法：Set tm = CreateObject("asptools.TypeManager")
+*/
+interface IXTypeManager : IDispatch{
+	/*! 创建数据结构管理对象
+	\param Ver 指定数据结构的名称，用于使用数据结构时引用
+	\return 数据结构管理对象*/
+	[id(1), helpstring("method newClass")] HRESULT newClass([in] BSTR Ver, [out, retval] IXClass** pVal);
+	/*! 创建指定数据结构的集合
+	\param varFmt 指定数据结构的名称
+	\return 指定数据结构的集合*/
+	[id(2), helpstring("property newRecordset")] HRESULT newRecordset([in, optional] VARIANT varFmt, [out, retval] IXRecords** pVal);
+};
+[
+	object,
+	uuid(B1BB8191-C25E-46BC-A356-6E196C2417AD),
+	dual,
+	nonextensible,
+	helpstring("IXHttp Interface"),
+	pointer_default(unique)
+]
+/*!	\brief HTTP 页面下载工具，支持简单的 http 数据提交和内容提取
+
+	创建方法：Set ht = CreateObject("asptools.http")
+*/
+interface IXHttp : IDispatch{
+	/*! 传送数据到指定的页面，并返回页面内容
+	\param url 指定页面的 url，仅允许 http 协议 url
+	\param varPost 指定要传送到服务器的文本内容，以 post 方式传送，可以省略
+	\return 指定页面接受数据后的响应文本*/
+	[id(1), helpstring("method Get")] HRESULT Get([in] BSTR url, [in, optional] VARIANT varPost, [out,retval] BSTR* retVal);
+};
+[
+	object,
+	uuid(C48F6A63-B50A-4215-94DC-1A7B7D37C0E0),
+	dual,
+	nonextensible,
+	helpstring("IXFactory Interface"),
+	pointer_default(unique)
+]
+/*!	\brief asptools 对象快速创建工厂
+
+	创建方法：Set ht = CreateObject("asptools.factory")
+*/
+interface IXFactory : IDispatch{
+	/*! 根据给定的对象名称创建 asptools 内部对象
+	\param objName 给定对象名称，如："dictionary"
+	\return 指定的对象实例*/
+	[id(1), helpstring("method CreateObject")] HRESULT CreateObject([in] BSTR objName, [out,retval] IDispatch** retVal);
+};
+[
+	uuid(11892796-187A-4CBE-B5D0-929E5A9A475D),
+	version(1.0),
+	helpstring("asptools 1.0 Type Library")
+]
+library asptoolsLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(DBBD6E4D-C143-470A-9F5F-86B10A2C4304),
+		helpstring("XDoc Class")
+	]
+	coclass XDoc
+	{
+		[default] interface IXDoc;
+		interface IXList;
+		interface IXField;
+		interface IXRecord;
+		interface IXRecords;
+		interface IXDocItem;
+		interface IXDocContent;
+	};
+	[
+		uuid(CB21844C-4953-4C4C-B315-AC8D876A4FF5),
+		helpstring("XDictionary Class")
+	]
+	coclass XDictionary
+	{
+		[default] interface IXDictionary;
+	};
+	[
+		uuid(29F7CF13-2B91-4AA7-B2ED-018B0C6CF98F),
+		helpstring("XForm Class")
+	]
+	coclass XForm
+	{
+		[default] interface IXForm;
+		interface IXUploadList;
+		interface IXUploadData;
+	};
+	[
+		uuid(51C03389-17FF-4106-A55B-2E4A2A858002),
+		helpstring("XEncoding Class")
+	]
+	coclass XEncoding
+	{
+		[default] interface IXEncoding;
+	};
+	[
+		uuid(E03E036D-7682-4D92-A264-F320FE1A7F87),
+		helpstring("XHash Class")
+	]
+	coclass XHash
+	{
+		[default] interface IXHash;
+	};
+	[
+		uuid(5D715AF9-6B61-4764-8F26-E0C6A74C91F0),
+		helpstring("XPicture Class")
+	]
+	coclass XPicture
+	{
+		[default] interface IXPicture;
+	};
+	[
+		uuid(2CBA4240-D481-47C2-9EAE-783CB981C412),
+		helpstring("XColorMan Class")
+	]
+	coclass XColorMan
+	{
+		[default] interface IXColorMan;
+	};
+	[
+		uuid(149C1D2C-88FC-43CB-95E6-51F4ED87A89A),
+		helpstring("XBinaryFile Class")
+	]
+	coclass XBinaryFile
+	{
+		[default] interface IXBinaryFile;
+	};
+	[
+		uuid(1F8E7220-8478-4E28-A288-6CCB1F3E31B9),
+		helpstring("XFolderMan Class")
+	]
+	coclass XFolderMan
+	{
+		[default] interface IXFolderMan;
+		interface IXPathBand;
+		interface IXChannel;
+		interface IXClass;
+		interface IXUrl;
+		interface IXFile;
+	};
+	[
+		uuid(BB93916A-D8FF-4272-BA86-BE72D4644714),
+		helpstring("XSessionMan Class")
+	]
+	coclass XSessionMan
+	{
+		[default] interface IXSessionMan;
+	};
+	[
+		uuid(930DFD19-30DF-4AE6-AE8A-87E822A4020E),
+		helpstring("XSession Class")
+	]
+	coclass XSession
+	{
+		[default] interface IXSession;
+	};
+	[
+		uuid(0BABCC27-BA72-45C1-A213-D98B3AD27735),
+		helpstring("XLRUCache Class")
+	]
+	coclass XLRUCache
+	{
+		[default] interface IXLRUCache;
+	};
+	[
+		uuid(764CEA3A-A4F0-4BFD-92A9-D9B411FCCD03),
+		helpstring("XRsa Class")
+	]
+	coclass XRsa
+	{
+		[default] interface IXRsa;
+	};
+	[
+		uuid(4AF8B4B3-C336-4FF5-968D-B3B1FD2026EA),
+		helpstring("XGeoTools Class")
+	]
+	coclass XGeoTools
+	{
+		[default] interface IXGeoTools;
+		interface IXGeoPoint;
+	};
+	[
+		uuid(01BED144-ECAB-42D8-A452-F66302651007),
+		helpstring("XLuckyLink Class")
+	]
+	coclass XLuckyLink
+	{
+		[default] interface IXLuckyLink;
+	};
+	[
+		uuid(6FC64C92-41A6-4327-B140-90D5ADE376CD),
+		helpstring("XGeoLinks Class")
+	]
+	coclass XGeoLinks
+	{
+		[default] interface IXGeoLinks;
+	};
+	[
+		uuid(E0671AFC-2DA9-448F-8661-7111EAFCE78E),
+		helpstring("XTypeManager Class")
+	]
+	coclass XTypeManager
+	{
+		[default] interface IXTypeManager;
+	};
+	[
+		uuid(B22D78BA-AD77-45E5-938C-FCB1133811D9),
+		helpstring("XHttp Class")
+	]
+	coclass XHttp
+	{
+		[default] interface IXHttp;
+	};
+	[
+		uuid(500B2164-01A3-4BB8-AEBE-6A68DE635831),
+		helpstring("XFactory Class")
+	]
+	coclass XFactory
+	{
+		[default] interface IXFactory;
+	};
+};

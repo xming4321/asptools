@@ -1,0 +1,27 @@
+HKCR
+{
+	asptools.BinaryFile.1 = s 'XBinaryFile Class'
+	{
+		CLSID = s '{149C1D2C-88FC-43CB-95E6-51F4ED87A89A}'
+	}
+	asptools.BinaryFile = s 'XBinaryFile Class'
+	{
+		CLSID = s '{149C1D2C-88FC-43CB-95E6-51F4ED87A89A}'
+		CurVer = s 'asptools.BinaryFile.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {149C1D2C-88FC-43CB-95E6-51F4ED87A89A} = s 'XBinaryFile Class'
+		{
+			ProgID = s 'asptools.BinaryFile.1'
+			VersionIndependentProgID = s 'asptools.BinaryFile'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Both'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{11892796-187A-4CBE-B5D0-929E5A9A475D}'
+		}
+	}
+}

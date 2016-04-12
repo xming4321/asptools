@@ -1,0 +1,27 @@
+HKCR
+{
+	asptools.ColorMan.1 = s 'XColorMan Class'
+	{
+		CLSID = s '{2CBA4240-D481-47C2-9EAE-783CB981C412}'
+	}
+	asptools.ColorMan = s 'XColorMan Class'
+	{
+		CLSID = s '{2CBA4240-D481-47C2-9EAE-783CB981C412}'
+		CurVer = s 'asptools.ColorMan.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {2CBA4240-D481-47C2-9EAE-783CB981C412} = s 'XColorMan Class'
+		{
+			ProgID = s 'asptools.ColorMan.1'
+			VersionIndependentProgID = s 'asptools.ColorMan'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Both'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{11892796-187A-4CBE-B5D0-929E5A9A475D}'
+		}
+	}
+}

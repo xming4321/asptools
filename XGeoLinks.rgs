@@ -1,0 +1,27 @@
+HKCR
+{
+	asptools.GeoLinks.1 = s 'XGeoLinks Class'
+	{
+		CLSID = s '{6FC64C92-41A6-4327-B140-90D5ADE376CD}'
+	}
+	asptools.GeoLinks = s 'XGeoLinks Class'
+	{
+		CLSID = s '{6FC64C92-41A6-4327-B140-90D5ADE376CD}'
+		CurVer = s 'asptools.GeoLinks.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {6FC64C92-41A6-4327-B140-90D5ADE376CD} = s 'XGeoLinks Class'
+		{
+			ProgID = s 'asptools.GeoLinks.1'
+			VersionIndependentProgID = s 'asptools.GeoLinks'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Both'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{11892796-187A-4CBE-B5D0-929E5A9A475D}'
+		}
+	}
+}

@@ -1,0 +1,27 @@
+HKCR
+{
+	asptools.GeoTools.1 = s 'XGeoTools Class'
+	{
+		CLSID = s '{4AF8B4B3-C336-4FF5-968D-B3B1FD2026EA}'
+	}
+	asptools.GeoTools = s 'XGeoTools Class'
+	{
+		CLSID = s '{4AF8B4B3-C336-4FF5-968D-B3B1FD2026EA}'
+		CurVer = s 'asptools.GeoTools.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {4AF8B4B3-C336-4FF5-968D-B3B1FD2026EA} = s 'XGeoTools Class'
+		{
+			ProgID = s 'asptools.GeoTools.1'
+			VersionIndependentProgID = s 'asptools.GeoTools'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Both'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{}'
+		}
+	}
+}

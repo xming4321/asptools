@@ -1,0 +1,27 @@
+HKCR
+{
+	asptools.FolderMan.1 = s 'XFolderMan Class'
+	{
+		CLSID = s '{1F8E7220-8478-4E28-A288-6CCB1F3E31B9}'
+	}
+	asptools.FolderMan = s 'XFolderMan Class'
+	{
+		CLSID = s '{1F8E7220-8478-4E28-A288-6CCB1F3E31B9}'
+		CurVer = s 'asptools.FolderMan.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {1F8E7220-8478-4E28-A288-6CCB1F3E31B9} = s 'XFolderMan Class'
+		{
+			ProgID = s 'asptools.FolderMan.1'
+			VersionIndependentProgID = s 'asptools.FolderMan'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Both'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{11892796-187A-4CBE-B5D0-929E5A9A475D}'
+		}
+	}
+}

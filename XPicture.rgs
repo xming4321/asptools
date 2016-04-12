@@ -1,0 +1,27 @@
+HKCR
+{
+	asptools.Picture.1 = s 'XPicture Class'
+	{
+		CLSID = s '{5D715AF9-6B61-4764-8F26-E0C6A74C91F0}'
+	}
+	asptools.Picture = s 'XPicture Class'
+	{
+		CLSID = s '{5D715AF9-6B61-4764-8F26-E0C6A74C91F0}'
+		CurVer = s 'asptools.Picture.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {5D715AF9-6B61-4764-8F26-E0C6A74C91F0} = s 'XPicture Class'
+		{
+			ProgID = s 'asptools.Picture.1'
+			VersionIndependentProgID = s 'asptools.Picture'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Both'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{11892796-187A-4CBE-B5D0-929E5A9A475D}'
+		}
+	}
+}

@@ -1,0 +1,27 @@
+HKCR
+{
+	asptools.Hash.1 = s 'XHash Class'
+	{
+		CLSID = s '{E03E036D-7682-4D92-A264-F320FE1A7F87}'
+	}
+	asptools.Hash = s 'XHash Class'
+	{
+		CLSID = s '{E03E036D-7682-4D92-A264-F320FE1A7F87}'
+		CurVer = s 'asptools.Hash.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {E03E036D-7682-4D92-A264-F320FE1A7F87} = s 'XHash Class'
+		{
+			ProgID = s 'asptools.Hash.1'
+			VersionIndependentProgID = s 'asptools.Hash'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Both'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{11892796-187A-4CBE-B5D0-929E5A9A475D}'
+		}
+	}
+}

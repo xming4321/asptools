@@ -1,0 +1,27 @@
+HKCR
+{
+	asptools.Document.1 = s 'XDoc Class'
+	{
+		CLSID = s '{DBBD6E4D-C143-470A-9F5F-86B10A2C4304}'
+	}
+	asptools.Document = s 'XDoc Class'
+	{
+		CLSID = s '{DBBD6E4D-C143-470A-9F5F-86B10A2C4304}'
+		CurVer = s 'asptools.Document.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {DBBD6E4D-C143-470A-9F5F-86B10A2C4304} = s 'XDoc Class'
+		{
+			ProgID = s 'asptools.Document.1'
+			VersionIndependentProgID = s 'asptools.Document'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Both'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{11892796-187A-4CBE-B5D0-929E5A9A475D}'
+		}
+	}
+}

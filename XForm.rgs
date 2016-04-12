@@ -1,0 +1,27 @@
+HKCR
+{
+	asptools.Form.1 = s 'XForm Class'
+	{
+		CLSID = s '{29F7CF13-2B91-4AA7-B2ED-018B0C6CF98F}'
+	}
+	asptools.Form = s 'XForm Class'
+	{
+		CLSID = s '{29F7CF13-2B91-4AA7-B2ED-018B0C6CF98F}'
+		CurVer = s 'asptools.Form.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {29F7CF13-2B91-4AA7-B2ED-018B0C6CF98F} = s 'XForm Class'
+		{
+			ProgID = s 'asptools.Form.1'
+			VersionIndependentProgID = s 'asptools.Form'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Both'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{11892796-187A-4CBE-B5D0-929E5A9A475D}'
+		}
+	}
+}

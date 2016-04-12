@@ -1,0 +1,26 @@
+HKCR
+{
+	asptools.Factory.1 = s 'XFactory Class'
+	{
+		CLSID = s '{500B2164-01A3-4BB8-AEBE-6A68DE635831}'
+	}
+	asptools.Factory = s 'XFactory Class'
+	{
+		CLSID = s '{500B2164-01A3-4BB8-AEBE-6A68DE635831}'
+		CurVer = s 'asptools.Factory.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {500B2164-01A3-4BB8-AEBE-6A68DE635831} = s 'XFactory Class'
+		{
+			ProgID = s 'asptools.Factory.1'
+			VersionIndependentProgID = s 'asptools.Factory'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Both'
+			}
+			'TypeLib' = s '{11892796-187A-4CBE-B5D0-929E5A9A475D}'
+		}
+	}
+}

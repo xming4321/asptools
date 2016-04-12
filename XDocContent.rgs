@@ -1,0 +1,27 @@
+HKCR
+{
+	asptools.XDocContent.1 = s 'XDocContent Class'
+	{
+		CLSID = s '{C60D7436-FA44-43B9-97C4-1A3FDB1AD8F0}'
+	}
+	asptools.XDocContent = s 'XDocContent Class'
+	{
+		CLSID = s '{C60D7436-FA44-43B9-97C4-1A3FDB1AD8F0}'
+		CurVer = s 'asptools.XDocContent.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {C60D7436-FA44-43B9-97C4-1A3FDB1AD8F0} = s 'XDocContent Class'
+		{
+			ProgID = s 'asptools.XDocContent.1'
+			VersionIndependentProgID = s 'asptools.XDocContent'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{11892796-187A-4CBE-B5D0-929E5A9A475D}'
+		}
+	}
+}

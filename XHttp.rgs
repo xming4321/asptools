@@ -1,0 +1,26 @@
+HKCR
+{
+	asptools.http.1 = s 'XHttp Class'
+	{
+		CLSID = s '{B22D78BA-AD77-45E5-938C-FCB1133811D9}'
+	}
+	asptools.http = s 'XHttp Class'
+	{
+		CLSID = s '{B22D78BA-AD77-45E5-938C-FCB1133811D9}'
+		CurVer = s 'asptools.http.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {B22D78BA-AD77-45E5-938C-FCB1133811D9} = s 'XHttp Class'
+		{
+			ProgID = s 'asptools.http.1'
+			VersionIndependentProgID = s 'asptools.http'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			'TypeLib' = s '{11892796-187A-4CBE-B5D0-929E5A9A475D}'
+		}
+	}
+}

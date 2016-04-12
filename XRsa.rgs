@@ -1,0 +1,27 @@
+HKCR
+{
+	asptools.Rsa.1 = s 'XRsa Class'
+	{
+		CLSID = s '{764CEA3A-A4F0-4BFD-92A9-D9B411FCCD03}'
+	}
+	asptools.Rsa = s 'XRsa Class'
+	{
+		CLSID = s '{764CEA3A-A4F0-4BFD-92A9-D9B411FCCD03}'
+		CurVer = s 'asptools.Rsa.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {764CEA3A-A4F0-4BFD-92A9-D9B411FCCD03} = s 'XRsa Class'
+		{
+			ProgID = s 'asptools.Rsa.1'
+			VersionIndependentProgID = s 'asptools.Rsa'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{11892796-187A-4CBE-B5D0-929E5A9A475D}'
+		}
+	}
+}

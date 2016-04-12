@@ -1,0 +1,11 @@
+HKCR
+{
+	NoRemove AppID
+	{
+		'%APPID%' = s 'asptools'
+		'asptools.DLL'
+		{
+			val AppID = s '%APPID%'
+		}
+	}
+}
